@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
 <form action = "{% url 'add_new_device' %}">
-    <button type="submit" class="btn btn-primary m-3">Primary</button>
+    <button type="submit" class="btn btn-primary m-3">Add new device</button>
 </form>
 <h2>This is a list of users devices</h2>
 {% if user.devices %}

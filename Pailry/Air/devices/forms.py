@@ -18,7 +18,7 @@ class NewDeviceForm(ModelForm):
     def clean_public_key(self):
         data = self.cleaned_data['public_key']
         
-        if Device.objects.get(public_key=data) is not None:
+        if Device.objects.filter(public_key=data):
             raise ValidationError('This public key already exists. Please check again.')
         
         return data
