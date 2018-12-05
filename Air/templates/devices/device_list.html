@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 {% block body %}
 <form action = "{% url 'add_new_device' %}">
-    <button type="submit" class="btn btn-primary m-3">Add new device</button>
+    <button type="submit" class="btn btn-primary my-3">Add new device</button>
 </form>
-<h2>This is a list of users devices</h2>
-{% if user.devices %}
-<h1>There are some devices here</h1>
+{% if devices %}
+    <h2>This is a list of your devices:</h2>
+    <ul class="devices">
+    {% for device in devices %}
+        <a href="{% url 'device_info' public_key=device.public_key %}" style="color:black;" ><li>Device with public key: {{device.public_key}}</li></a>
+    {% endfor %}
+    </ul>
+{% else %}
+    <h2>You have no devices</h2>
 {% endif %}
 
 {% endblock %}

@@ -15,7 +15,7 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('home')
+            return render(request, 'index/home.html', {'message':'U have been succesfuly singed up'})
     else:
         form = forms.SignUpForm()
     return render(request, 'users/signup.html', {'form': form})
@@ -24,4 +24,4 @@ def profile(request):
     if request.user.is_authenticated:
         return render(request, 'users/profile.html')
     else:
-        return redirect('login')
+        return render(request,'users/login.html', {'errors': ['Please log in if You want to see your profile']})

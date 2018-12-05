@@ -11,12 +11,6 @@ from django.forms import ModelForm
 
 ERROR_MSG = '{} should be between {} and {} deg'
 
-# Create your models here.
-def raise_validator(value):
-    raise ValidationError(
-            ('longitude should be between -180 and 180 degrees')
-        )
-
 class Location(models.Model):
     lng = models.FloatField('Longitude', 'lng')
     lat = models.FloatField('Latitude', 'lat')
@@ -33,6 +27,7 @@ class Data(models.Model):
 
     def __str__(self):
         return "Data from {} with value : {}".format(self.send_date, self.value)
+
     class Meta:
         abstract = True
 
@@ -47,5 +42,6 @@ class Device(models.Model):
     )
     data_points = models.ArrayModelField(
         model_container=Data,
-
     )
+    def __str__(self):
+        return 'Device {}'.format(self.public_key)
