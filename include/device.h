@@ -17,7 +17,7 @@ public:
     DataType dataType;
 
     Device() { }
-    Device(int id) : id(id) { 
+    Device(int id) : id(id) {
         user = "";
         pubKey = "";
         longitude = 0.0;
@@ -25,8 +25,8 @@ public:
         dataType = DataType::CO;
     }
 
-    Device(int id, const std::string &user, const std::string &pubKey, double longitude,
-           double attitude, DataType dataType) : id(id), user(user), pubKey(pubKey), longitude(longitude),
+    Device(int id, const std::string &user, const std::string &pubKey, double latitude,
+           double longitude, DataType dataType) : id(id), user(user), pubKey(pubKey), longitude(longitude),
            latitude(latitude),  dataType(dataType) { }
 
 

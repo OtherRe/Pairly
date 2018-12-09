@@ -419,5 +419,104 @@ BOOST_AUTO_TEST_CASE(add_data_two_on_one_sample)
   BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 18001);
 }
 
+BOOST_AUTO_TEST_CASE(get_devices_in_radius)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0, "a", "", 52.230055, 21.010606, DataType::CO)); // Warszawa cetnrum
+  pairly.addDevice(Device(1, "a", "", 52.229444, 21.011357, DataType::CO)); // Warszawa centrum
+
+  pairly.addDevice(Device(2, "a", "", 52.327085, 21.005208, DataType::CO)); // Warszawa - Bialoleka
+  pairly.addDevice(Device(3, "a", "", 52.210512, 21.007089, DataType::CO)); // Warszawa - Mokotow
+
+
+  BOOST_CHECK_EQUAL(pairly.getDevices(52.230250, 21.011985, 1, DataType::CO).size(), 2);
+}
+
+BOOST_AUTO_TEST_CASE(get_devices_in_radius2)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0, "a", "", 52.230055, 21.010606, DataType::CO)); // Warszawa cetnrum
+  pairly.addDevice(Device(1, "a", "", 52.229444, 21.011357, DataType::CO)); // Warszawa centrum
+
+  pairly.addDevice(Device(2, "a", "", 52.327085, 21.005208, DataType::CO)); // Warszawa - Bialoleka
+  pairly.addDevice(Device(3, "a", "", 52.210512, 21.007089, DataType::CO)); // Warszawa - Mokotow
+
+
+  BOOST_CHECK_EQUAL(pairly.getDevices(52.230250, 21.011985, 8.0, DataType::CO).size(), 3);
+}
+
+BOOST_AUTO_TEST_CASE(get_devices_in_radius3)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0, "a", "", 52.230055, 21.010606, DataType::CO)); // Warszawa cetnrum
+  pairly.addDevice(Device(1, "a", "", 52.229444, 21.011357, DataType::CO)); // Warszawa centrum
+
+  pairly.addDevice(Device(2, "a", "", 52.327085, 21.005208, DataType::CO)); // Warszawa - Bialoleka
+  pairly.addDevice(Device(3, "a", "", 52.210512, 21.007089, DataType::CO)); // Warszawa - Mokotow
+
+
+  BOOST_CHECK_EQUAL(pairly.getDevices(52.230250, 21.011985, 15.0, DataType::CO).size(), 4);
+}
+
+BOOST_AUTO_TEST_CASE(get_devices_in_radius_south_hemisphere)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0, "a", "", 52.230055, 21.010606, DataType::CO)); // Warszawa cetnrum
+  pairly.addDevice(Device(1, "a", "", 52.229444, 21.011357, DataType::CO)); // Warszawa centrum
+
+
+  pairly.addDevice(Device(2, "a", "", 52.327085, 21.005208, DataType::CO)); // Warszawa - Bialoleka
+  pairly.addDevice(Device(3, "a", "", 52.210512, 21.007089, DataType::CO)); // Warszawa - Mokotow
+
+  pairly.addDevice(Device(4, "a", "", -52.229444, 21.011357, DataType::CO)); // south hemisphere
+  pairly.addDevice(Device(5, "a", "", -52.229444, 21.011357, DataType::CO)); // south hemisphere
+
+
+
+  BOOST_CHECK_EQUAL(pairly.getDevices(52.230250, 21.011985, 15.0, DataType::CO).size(), 4);
+}
+
+BOOST_AUTO_TEST_CASE(get_devices_in_radius_west_hemisphere)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0, "a", "", 52.230055, 21.010606, DataType::CO)); // Warszawa cetnrum
+  pairly.addDevice(Device(1, "a", "", 52.229444, 21.011357, DataType::CO)); // Warszawa centrum
+
+
+  pairly.addDevice(Device(2, "a", "", 52.327085, 21.005208, DataType::CO)); // Warszawa - Bialoleka
+  pairly.addDevice(Device(3, "a", "", 52.210512, 21.007089, DataType::CO)); // Warszawa - Mokotow
+
+
+  pairly.addDevice(Device(6, "a", "", 52.229444, -21.011357, DataType::CO)); // West hemisphere
+  pairly.addDevice(Device(7, "a", "", 52.229444, -21.011357, DataType::CO)); // West heisphere
+
+
+  BOOST_CHECK_EQUAL(pairly.getDevices(52.230250, 21.011985, 15.0, DataType::CO).size(), 4);
+}
 
 BOOST_AUTO_TEST_SUITE_END()

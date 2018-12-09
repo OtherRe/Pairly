@@ -28,13 +28,13 @@ public:
      *      from that point.
      * 
      *      @param dev Device reference
-     *      @param longitude Geographical longitude
      *      @param latitude Geographical latitude
+     *      @param longitude Geographical longitude
      *      @param radius Radius in kilometers
      * 
      *      @return Check if the device lies in the area
      */
-    static bool isInRadius(const Device &dev, double longitude, double latitude, double radius);
+    static bool isInRadius(const Device &dev, double latitude, double longitude, double radius);
     
     /**
      *      @brief Method used to pass a pointer to DataFactory, which is an abstract class
@@ -80,6 +80,9 @@ public:
      *      @return Vector of all devices.
      */
     std::vector<Device> getDevices() const;
+
+    std::vector<Device> getDevices(double latitude, double longitude,
+                                   double kilometersRadius, DataType dataType) const;
 
     /**
      *      @brief Method used to get data from a single device. It is possible to
@@ -150,7 +153,7 @@ public:
      *
      *      @return A vector of data samples  
      */
-    std::vector<Data> getAreaData(double longitude, double latitude,
+    std::vector<Data> getAreaData(double latitude, double longitude,
                                   double kilometersRadius, int after,
                                   int before, int hoursInterval, DataType dataType) const;
 
@@ -163,7 +166,11 @@ private:
     
     void checkDataFactory() const;
 
-    int div_to_nearest(int n, int d) const;
+    static int div_to_nearest(int n, int d);
+
+    static double deg2rad(double);
+    static double vincenty_distance(double latitude1, double longitude1, double latitude2,
+                             double longitude2);
 
     static const int MINUTE = 60;
     static const int HOUR = 3600;
