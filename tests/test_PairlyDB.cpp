@@ -380,5 +380,44 @@ BOOST_AUTO_TEST_CASE(add_sparse_data)
   }
 }
 
+BOOST_AUTO_TEST_CASE(add_data_two_on_one_sample_simple)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0));
+
+  time_t t = std::time(nullptr);
+
+  for (int i = 0; i < 4; i++) {
+    pairly.addData(0, Data(i, t + i * 1800));
+  }
+
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 3);
+}
+
+
+BOOST_AUTO_TEST_CASE(add_data_two_on_one_sample)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0));
+
+  time_t t = std::time(nullptr);
+
+  for (int i = 0; i < 36000; i++) {
+    pairly.addData(0, Data(i, t + i * 1800));
+  }
+
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 18001);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
