@@ -45,7 +45,7 @@ double PairlyDB::vincenty_distance(double latitude1, double longitude1, double l
     double lat2 = deg2rad(latitude2);
     double lon2 = deg2rad(longitude2);
 
-    double d_lon = abs(lon1 - lon2);
+    double d_lon = std::abs(lon1 - lon2);
 
     // Numerator
     double a = pow(cos(lat2) * sin(d_lon), 2);
@@ -101,7 +101,6 @@ bool PairlyDB::isInRadius(const Device &dev, double latitude, double longitude, 
 {
     double dist = vincenty_distance(latitude, longitude, dev.latitude, dev.longitude);
 
-    std::cout << dist << std::endl;
     return  (dist <= radius);
 }
 
