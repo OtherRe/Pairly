@@ -11,22 +11,24 @@ class Device {
 public:
     int id;
     std::string user;
+    std::string name;
     std::string pubKey;
     double longitude;
     double latitude;
     DataType dataType;
 
     Device() { }
-    Device(int id) : id(id) { 
-        user = "";
-        pubKey = "";
-        longitude = 0.0;
-        latitude = 0.0;
-        dataType = DataType::CO;
+    Device(int id) : id(id), user(""), pubKey(""), name(""), longitude(0.0), latitude(0.0), dataType(DataType::CO) { 
+        // user = "";
+        // pubKey = "";
+        // name = ""
+        // longitude = 0.0;
+        // latitude = 0.0;
+        // dataType = DataType::CO;
     }
 
-    Device(int id, const std::string &user, const std::string &pubKey, double longitude,
-           double attitude, DataType dataType) : id(id), user(user), pubKey(pubKey), longitude(longitude),
+    Device(int id, const std::string &user, const std::string name, const std::string &pubKey, double longitude,
+           double attitude, DataType dataType) : id(id), user(user), name(name), pubKey(pubKey), longitude(longitude),
            latitude(latitude),  dataType(dataType) { }
 
 

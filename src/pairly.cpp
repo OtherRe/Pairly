@@ -67,33 +67,9 @@ std::vector<Data> PairlyDB::getDeviceData(int deviceId, int hourInterval, int af
     std::sort(data.begin(), data.end(), [](auto &left, auto &right) {
                                 return left.second < right.second;});
 
-    std::vector<Data> averagedData;
-
-    Data current = {0.0, after};
     int currentInterval = std::max(0, after - (hourInterval * 60 / 2));
-    int nElements = 0;
 
-    for (Data &d : data) {
-        if (d.second < currentInterval + hourInterval * 60) {
-            current.first += d.first;
-            nElements++;
-        } else {
-            current.first = current.first / nElements;
-            averagedData.push_back(current);
-            current.first = 0;
-            current.second += hourInterval * 60;
-            currentInterval += hourInterval * 60;
-            nElements = 0;
-        }
-    }
-
-    if (current.second < currentInterval + hourInterval * 60) {
-        current.first = current.first / nElements;
-        averagedData.push_back(current);
-    }
-
-
-    return averagedData;
+    return averageData(data, currentInterval, hourInterval);
 }
 
 void PairlyDB::addDevice(const Device &device)
@@ -124,22 +100,50 @@ std::vector<Data> PairlyDB::getAreaData(double longitude, double latitude,
     checkDataFactory();
 
     std::vector<Device> devices = dataFactory->getDevices();
-    std::vector<Device> filtered;
+    devices.erase(std::remove_if(devices.begin(), devices.end(), [&](Device& d){
+        return !(d.dataType == dataType || isInRadius(d, longitude, latitude, kilometersRadius));
+    }));
 
-    for (Device &dev : devices) {
-        if (dev.dataType == dataType && isInRadius(dev, longitude, latitude, kilometersRadius))
-            filtered.push_back(dev);
-    }
 
     std::vector<Data> data;
-
-    int time = after;
+    int time = after - hoursInterval * 60 / 2;
 
     while (time < before) {
+        // double sum
+
         data.emplace_back(0.0, time);
         time += hoursInterval * 60;
     }
 
     // TODO: calculate actual data
     return data;
+}
+
+std::vector<Data> PairlyDB::averageData(const std::vector<Data>& data, int currentInterval, int hourInterval) const
+{
+    std::vector<Data> averagedData;
+
+    Data current = {0.0, currentInterval};
+    int nElements = 0;
+
+    for (const Data &d : data) {
+        if (d.second < currentInterval + hourInterval * 60) {
+            current.first += d.first;
+            nElements++;
+        } else {
+            current.first = current.first / nElements;
+            averagedData.push_back(current);
+            current.first = 0;
+            current.second += hourInterval * 60;
+            currentInterval += hourInterval * 60;
+            nElements = 0;
+        }
+    }
+
+    if (current.second < currentInterval + hourInterval * 60) {
+        current.first = current.first / nElements;
+        averagedData.push_back(current);
+    }
+ 
+    return averagedData; 
 }

@@ -162,7 +162,7 @@ private:
     DataFactory *dataFactory = nullptr;
     
     void checkDataFactory() const;
-
+    std::vector<Data> averageData(const std::vector<Data>& data, int currentInterval, int hourInterval) const;
 
     static const int MINUTE = 60;
     static const int HOUR = 3600;
