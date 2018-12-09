@@ -8,6 +8,8 @@
 #include "pairly.h"
 #include "pairly-exceptions.h"
 #include "data-factory-mock.h"
+#include <ctime>
+#include <iostream>
 
 
 BOOST_AUTO_TEST_SUITE( PAIRLYDB_TEST_SUITE )
@@ -180,9 +182,11 @@ BOOST_AUTO_TEST_CASE( add_some_data_with_no_zero_interval )
 
   pairly.addDevice(Device(0));
 
-  pairly.addData(0, Data(1.0, 0));
-  pairly.addData(0, Data(2.0, 1));
-  pairly.addData(0, Data(3.0, 2));
+  time_t t = std::time(nullptr);
+
+  pairly.addData(0, Data(1.0, t + 0));
+  pairly.addData(0, Data(2.0, t + 1));
+  pairly.addData(0, Data(3.0, t + 2));
 
   BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 1);
   BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).front().first, 2.0);
@@ -198,16 +202,183 @@ BOOST_AUTO_TEST_CASE( add_more_data_with_no_zero_interval )
 
   pairly.addDevice(Device(0));
 
-  pairly.addData(0, Data(1.0, 0));
-  pairly.addData(0, Data(2.0, 1));
-  pairly.addData(0, Data(3.0, 2));
-  pairly.addData(0, Data(4.0, 3));
-  pairly.addData(0, Data(5.0, 4));
+  time_t t = std::time(nullptr);
+
+  pairly.addData(0, Data(1.0, t + 0));
+  pairly.addData(0, Data(2.0, t + 1));
+  pairly.addData(0, Data(3.0, t + 2));
+  pairly.addData(0, Data(4.0, t + 3));
+  pairly.addData(0, Data(5.0, t + 4));
 
   BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 1);
   BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).front().first, 3.0);
 }
 
+BOOST_AUTO_TEST_CASE(add_different_time_data)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0));
+
+  time_t t = 3600;
+
+  pairly.addData(0, Data(1.0, t + 0));
+  pairly.addData(0, Data(4.0, t + 1700));
+  pairly.addData(0, Data(3.0, t + 1900));
+  pairly.addData(0, Data(3.0, t + 3000));
+  pairly.addData(0, Data(2.0, t + 5500));
+  pairly.addData(0, Data(2.0, t + 5800));
+
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 3);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1)[0].first, 2.5);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1)[1].first, 3.0);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1)[2].first, 2.0);
+}
+
+BOOST_AUTO_TEST_CASE(add_different_time_data2)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0));
+
+  time_t t = 3620;
+
+  pairly.addData(0, Data(1.0, t + 0));
+  pairly.addData(0, Data(4.0, t + 1700));
+  pairly.addData(0, Data(3.0, t + 1900));
+  pairly.addData(0, Data(3.0, t + 3000));
+  pairly.addData(0, Data(2.0, t + 5500));
+  pairly.addData(0, Data(2.0, t + 5800));
+
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 3);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1)[0].first, 2.5);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1)[1].first, 3.0);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1)[2].first, 2.0);
+}
+
+
+BOOST_AUTO_TEST_CASE(add_different_time_data3)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0));
+
+  time_t t = 3600;
+
+  pairly.addData(0, Data(1.0, t + 0));
+  pairly.addData(0, Data(4.0, t + 1700));
+  pairly.addData(0, Data(3.0, t + 3600 + 1900));
+  pairly.addData(0, Data(3.0, t + 3600 + 3000));
+  pairly.addData(0, Data(2.0, t + 7200 + 5500));
+  pairly.addData(0, Data(2.0, t + 7200 + 5800));
+
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 3);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1)[0].first, 2.5);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1)[1].first, 3.0);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1)[2].first, 2.0);
+}
+
+BOOST_AUTO_TEST_CASE(add_data_filtered)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0));
+
+  time_t t = 3600;
+
+  pairly.addData(0, Data(1.0, t + 0));
+  pairly.addData(0, Data(4.0, t + 1700));
+  pairly.addData(0, Data(3.0, t + 1900));
+  pairly.addData(0, Data(3.0, t + 3000));
+  pairly.addData(0, Data(2.0, t + 7200 + 5500));
+  pairly.addData(0, Data(2.0, t + 7200 + 5800));
+  pairly.addData(0, Data(2.0, t + 7200 + 6600));
+  pairly.addData(0, Data(2.0, t + 7200 + 800));
+
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1, 0, 7200).size(), 2);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1, 0, 7200)[0].first, 2.5);
+}
+
+
+BOOST_AUTO_TEST_CASE(add_data_filtered_dense)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0));
+
+  time_t t = 3600;
+
+  pairly.addData(0, Data(4.0, t + 0));
+  pairly.addData(0, Data(4.0, t + 1700));
+  pairly.addData(0, Data(4.0, t + 1750));
+  pairly.addData(0, Data(4.0, t + 1760));
+  pairly.addData(0, Data(4.0, t + 1770));
+  pairly.addData(0, Data(4.0, t + 1780));
+  pairly.addData(0, Data(4.0, t + 1790));
+
+
+  pairly.addData(0, Data(3.0, t + 1900));
+  pairly.addData(0, Data(3.0, t + 1920));
+  pairly.addData(0, Data(3.0, t + 1930));
+  pairly.addData(0, Data(3.0, t + 1940));
+  pairly.addData(0, Data(3.0, t + 1950));
+  pairly.addData(0, Data(3.0, t + 1960));
+  pairly.addData(0, Data(3.0, t + 3000));
+  pairly.addData(0, Data(2.0, t + 7200 + 5500));
+  pairly.addData(0, Data(2.0, t + 7200 + 5800));
+  pairly.addData(0, Data(2.0, t + 7200 + 6600));
+  pairly.addData(0, Data(2.0, t + 7200 + 800));
+
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1, 0, 7200).size(), 2);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1, 0, 7200)[0].first, 4.0);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1, 0, 7200)[1].first, 3.0);
+}
+
+
+BOOST_AUTO_TEST_CASE(add_sparse_data)
+{
+  DataFactoryMock db;
+
+  PairlyDB &pairly = PairlyDB::instance();
+  db.connect();
+  pairly.init(&db);
+
+  pairly.addDevice(Device(0));
+
+  time_t t = std::time(nullptr);
+
+  for (int i = 0; i < 150; i++) {
+    pairly.addData(0, Data(i, t + i * 3600));
+  }
+
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 150);
+
+  std::vector<Data> result = pairly.getDeviceData(0, 1);
+
+  for (int i = 0; i < 150; i++) {
+    BOOST_CHECK_EQUAL(result[i].first, i);
+  }
+}
 
 
 BOOST_AUTO_TEST_SUITE_END()

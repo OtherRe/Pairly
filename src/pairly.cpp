@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <unordered_map>
 
 PairlyDB& PairlyDB::instance()
 {
@@ -57,43 +58,56 @@ std::vector<Device> PairlyDB::getDevices() const
     return dataFactory->getDevices();
 }
 
+int PairlyDB::div_to_nearest(int n, int d) const
+{
+    if (n < 0) {
+        return (n - d/2 + 1) / d;
+    } else {
+        return (n + d/2) / d;
+    }
+}
+
 std::vector<Data> PairlyDB::getDeviceData(int deviceId, int hourInterval, int after, int before) const
 {
     checkDataFactory();
 
     std::vector<Data> data = dataFactory->getDeviceData(deviceId, after, before);
 
-    /* sort by time */
-    std::sort(data.begin(), data.end(), [](auto &left, auto &right) {
-                                return left.second < right.second;});
+    if (data.empty())
+        return data;
 
-    std::vector<Data> averagedData;
+    if (hourInterval == 0)
+        return data;
 
-    Data current = {0.0, after};
-    int currentInterval = std::max(0, after - (hourInterval * 60 / 2));
-    int nElements = 0;
+    /* Key - result element time value
+     * value - pair of sum of measuered values and number of measuered values
+     */
+    std::unordered_map<int, std::pair<double, int>> map;
+
+    int interval = hourInterval * HOUR;
 
     for (Data &d : data) {
-        if (d.second < currentInterval + hourInterval * 60) {
-            current.first += d.first;
-            nElements++;
+        int rounded = div_to_nearest(d.second, interval) * interval;
+
+        auto it = map.find(rounded);
+
+        if (it == map.end()) {
+            map[rounded] = std::make_pair(d.first, 1);
         } else {
-            current.first = current.first / nElements;
-            averagedData.push_back(current);
-            current.first = 0;
-            current.second += hourInterval * 60;
-            currentInterval += hourInterval * 60;
-            nElements = 0;
+            it->second.first += d.first;
+            it->second.second++;
         }
     }
 
-    if (current.second < currentInterval + hourInterval * 60) {
-        current.first = current.first / nElements;
-        averagedData.push_back(current);
+    std::vector<Data> result;
+    for (auto it = map.begin(); it != map.end(); it++) {
+        result.push_back(std::make_pair(it->second.first / it->second.second, it->first));
     }
 
+    std::sort(result.begin(), result.end(), [](auto &left, auto &right) {
+                            return left.second < right.second;});
 
-    return averagedData;
+    return result;
 }
 
 void PairlyDB::addDevice(const Device &device)

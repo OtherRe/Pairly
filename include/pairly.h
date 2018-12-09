@@ -163,6 +163,7 @@ private:
     
     void checkDataFactory() const;
 
+    int div_to_nearest(int n, int d) const;
 
     static const int MINUTE = 60;
     static const int HOUR = 3600;
