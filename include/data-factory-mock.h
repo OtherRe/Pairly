@@ -19,6 +19,7 @@ public:
     virtual std::vector<Data> getDeviceData(int deviceId,
                                             int timeAfter = 0, int timeBefore = std::numeric_limits<int>::max());
     virtual void addData(int deviceId, const Data &data);
+    virtual std::vector<Device> getDevices(const std::string &user);
 
     void connect();
     void disconnect();

@@ -81,6 +81,8 @@ public:
      *  @param data A reference to new data sample.
      */
     virtual void addData(int deviceId, const Data &data) = 0;
+
+    virtual std::vector<Device> getDevices(const std::string &user) = 0;
 };
 
 #endif

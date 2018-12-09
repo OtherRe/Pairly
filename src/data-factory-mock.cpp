@@ -24,9 +24,11 @@ void DataFactoryMock::addDevice(const Device &dev)
 {
     for (auto it = devices.begin(); it != devices.end(); it++) {
         if (it->id == dev.id) {
-            throw DataBaseException("Element with such already exists");
+            throw DataBaseException("Element with such id already exists");
         }
     }
+
+    map.insert(std::make_pair(dev.id, std::vector<Data>(0)));
     devices.push_back(dev);
 }
 
@@ -78,4 +80,16 @@ void DataFactoryMock::addData(int deviceId, const Data &data)
         throw DataBaseException("Element with such id does not exist");
     
     it->second.push_back(data);
+}
+
+std::vector<Device> DataFactoryMock::getDevices(const std::string &user)
+{
+    std::vector<Device> result;
+
+    for (Device &dev : this->devices) {
+        if (dev.user == user)
+            result.push_back(dev);
+    }
+
+    return result;
 }

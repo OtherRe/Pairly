@@ -80,7 +80,7 @@ public:
      *      @return Vector of all devices.
      */
     std::vector<Device> getDevices() const;
-    
+
     /**
      *      @brief Method used to get data from a single device. It is possible to
      *      specify time range of data samples.
@@ -92,6 +92,7 @@ public:
      *      @param hourInterval Hour interval with which the data should be collected.
      *      The method takes the average of data samples if they are more frequent
      *      than the given interval or copies the samples if they are less frequent.
+     *      Value 0 means "get all the data as it is in the db".
      * 
      *      @param after Time in Unix time format.
      *      @param before Time in Unix time format.
@@ -99,7 +100,7 @@ public:
      *      @return Vector of data samples.
      */
     std::vector<Data> getDeviceData(int deviceId, int hourInterval, int after = 0, int before = std::numeric_limits<int>::max()) const;
- 
+
     /**
      *      @brief Method used to add a new device to the database.
      * 
@@ -109,7 +110,7 @@ public:
      *      @param reference to a new device
      */
     void addDevice(const Device &device);
-    
+
     /**
      *      @brief Method used to remove a device from a database.
      * 
@@ -128,7 +129,7 @@ public:
      *      @param data new data sample
      */
     void addData(int deviceId, const Data &data);
-    
+
     /**
      *      @brief Method used to obtain data from a given area with a given time interval
      *      and from a given time range.
@@ -142,14 +143,17 @@ public:
      *      @param before Time in Unix time format.
      *      @param hourInterval Hour interval with which the data should be collected.
      *      The method takes the average of data samples if they are more frequent
-     *      than the given interval or copies the samples if they are less frequent. 
+     *      than the given interval or copies the samples if they are less frequent.
+     *      Value 0 means "get all the data as it is in the db".
+     *
+     *      @param dataType Type of particles, which we want to measure.
      *
      *      @return A vector of data samples  
      */
     std::vector<Data> getAreaData(double longitude, double latitude,
                                   double kilometersRadius, int after,
-                                  int before, int hoursInterval) const;
-    
+                                  int before, int hoursInterval, DataType dataType) const;
+
 private:
     PairlyDB() { }
     PairlyDB(const PairlyDB&) = delete;

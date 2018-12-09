@@ -2,6 +2,7 @@
 #include "pairly-exceptions.h"
 
 #include <algorithm>
+#include <iostream>
 
 PairlyDB& PairlyDB::instance()
 {
@@ -46,6 +47,7 @@ std::vector<Device> PairlyDB::getDevices(const std::string &user) const
 {
     checkDataFactory();
 
+    return dataFactory->getDevices(user);
 }
 
 std::vector<Device> PairlyDB::getDevices() const
@@ -68,10 +70,11 @@ std::vector<Data> PairlyDB::getDeviceData(int deviceId, int hourInterval, int af
     std::vector<Data> averagedData;
 
     Data current = {0.0, after};
+    int currentInterval = std::max(0, after - (hourInterval * 60 / 2));
     int nElements = 0;
 
     for (Data &d : data) {
-        if (d.second < current.second + hourInterval * 60) {
+        if (d.second < currentInterval + hourInterval * 60) {
             current.first += d.first;
             nElements++;
         } else {
@@ -79,9 +82,16 @@ std::vector<Data> PairlyDB::getDeviceData(int deviceId, int hourInterval, int af
             averagedData.push_back(current);
             current.first = 0;
             current.second += hourInterval * 60;
+            currentInterval += hourInterval * 60;
             nElements = 0;
         }
     }
+
+    if (current.second < currentInterval + hourInterval * 60) {
+        current.first = current.first / nElements;
+        averagedData.push_back(current);
+    }
+
 
     return averagedData;
 }
@@ -109,7 +119,7 @@ void PairlyDB::addData(int deviceId, const Data &data)
 
 std::vector<Data> PairlyDB::getAreaData(double longitude, double latitude,
                                         double kilometersRadius, int after,
-                                        int before, int hoursInterval) const
+                                        int before, int hoursInterval, DataType dataType) const
 {
     checkDataFactory();
 
@@ -117,7 +127,7 @@ std::vector<Data> PairlyDB::getAreaData(double longitude, double latitude,
     std::vector<Device> filtered;
 
     for (Device &dev : devices) {
-        if (isInRadius(dev, longitude, latitude, kilometersRadius))
+        if (dev.dataType == dataType && isInRadius(dev, longitude, latitude, kilometersRadius))
             filtered.push_back(dev);
     }
 
