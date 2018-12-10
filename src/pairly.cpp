@@ -110,6 +110,8 @@ void PairlyDB::getDataIntervals(DataIntervals &map, const DataVec &data, int hou
     for (const Data &d : data) {
         int rounded = div_to_nearest(d.second, interval) * interval;
 
+        //std::cout << "ROUNDED " << rounded << std::endl;
+
         auto it = map.find(rounded);
 
         if (it == map.end()) {

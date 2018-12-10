@@ -14,7 +14,6 @@
 
 BOOST_AUTO_TEST_SUITE( PAIRLYDB_TEST_SUITE )
 
-// ------------- Tests Follow --------------
 BOOST_AUTO_TEST_CASE( connection_not_connected )
 {
   DataFactoryMock db;
@@ -396,7 +395,7 @@ BOOST_AUTO_TEST_CASE(add_data_two_on_one_sample_simple)
     pairly.addData(0, Data(i, t + i * 1800));
   }
 
-  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 2);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 3);
 }
 
 
@@ -412,12 +411,11 @@ BOOST_AUTO_TEST_CASE(add_data_two_on_one_sample)
 
   time_t t = 3600;
 
-  // FIXME: undefined behaviour
   for (int i = 0; i < 36000; i++) {
     pairly.addData(0, Data(i, t + i * 1800));
   }
 
-  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 18000);
+  BOOST_CHECK_EQUAL(pairly.getDeviceData(0, 1).size(), 18001);
 }
 
 BOOST_AUTO_TEST_CASE(get_devices_in_radius)

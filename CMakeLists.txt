@@ -6,13 +6,15 @@ enable_testing()
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 include_directories (${Boost_INCLUDE_DIRS})
 
-set(CMAKE_REQUIRED_FLAGS "-Werror")
-
-
-set(UNDEFINED_BEHAVIOR_SANITIZER_FLAG "-fsanitize=undefined")
 
 # TODO: set Debug or release
 set(CMAKE_BUILD_TYPE Release)
+
+set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Werror -pedantic -Wextra")
+
+if (${SANITIZE})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
+endif()
  
 include_directories(include)
  
@@ -43,7 +45,7 @@ foreach(testSrc ${TEST_SRCS})
                  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/testBin/${testName} )
 endforeach(testSrc)
 
-
+message("-- Compile with: ${CMAKE_CXX_FLAGS}")
 #Set the location for library installation -- i.e., /usr/lib in this case
 # not really necessary in this example. Use "sudo make install" to apply
 #install(TARGETS testStudent DESTINATION /usr/lib)
