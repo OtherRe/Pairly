@@ -7,28 +7,26 @@
 #include "device.h"
 #include "data-factory.h"
 
-using Data = std::pair<double, int>;
-
 class DataFactoryMock : public DataFactory {
 public:
     virtual bool isConnected();
-    virtual std::vector<Device> getDevices();
+    virtual DeviceVec getDevices();
     virtual void addDevice(const Device &dev);
     virtual void removeDevice(int deviceId);
     virtual Device getDeviceById(int id);
-    virtual std::vector<Data> getDeviceData(int deviceId,
+    virtual DataVec getDeviceData(int deviceId,
                                             int timeAfter = 0, int timeBefore = std::numeric_limits<int>::max());
     virtual void addData(int deviceId, const Data &data);
-    virtual std::vector<Device> getDevices(const std::string &user);
+    virtual DeviceVec getDevices(const std::string &user);
 
     void connect();
     void disconnect();
 
 private:
-    using DeviceDataMap = std::map<int, std::vector<Data>>;
+    using DeviceDataMap = std::map<int, DataVec>;
 
     bool connected = false;
-    std::vector<Device> devices;
+    DeviceVec devices;
     DeviceDataMap map;
 };
 

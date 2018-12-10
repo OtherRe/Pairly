@@ -9,6 +9,8 @@
  *  @brief Pair of value and sample time.
  */
 using Data = std::pair<double, int>;
+using DeviceVec = std::vector<Device>;
+using DataVec = std::vector<Data>;
 
 /**
  *  @class DataFactory
@@ -33,7 +35,7 @@ public:
      * 
      *  @return A vector of all available devices.
      */
-    virtual std::vector<Device> getDevices() = 0;
+    virtual DeviceVec getDevices() = 0;
 
     /**
      *  @brief Add a new device to the database.
@@ -71,8 +73,8 @@ public:
      * 
      *  @return Vector of data samples.
      */
-    virtual std::vector<Data> getDeviceData(int deviceId,
-                                            int timeAfter = 0, int timeBefore = std::numeric_limits<int>::max()) = 0;
+    virtual DataVec getDeviceData(int deviceId, int timeAfter = 0,
+                                  int timeBefore = std::numeric_limits<int>::max()) = 0;
 
     /**
      *  @brief Add a new data sample.
@@ -82,7 +84,7 @@ public:
      */
     virtual void addData(int deviceId, const Data &data) = 0;
 
-    virtual std::vector<Device> getDevices(const std::string &user) = 0;
+    virtual DeviceVec getDevices(const std::string &user) = 0;
 };
 
 #endif

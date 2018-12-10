@@ -4,6 +4,7 @@
 #include "data-factory.h"
 #include <vector>
 #include <limits>
+#include <unordered_map>
 
 /**
  *  @class PairlyDB
@@ -64,13 +65,13 @@ public:
      *      If the user does not exist or does not have any devices, the method
      *      returns an empty vector.
      * 
-     *      @throws PairlyLibException if the dataFactory pointer is not present\
+     *      @throws PairlyLibException if the dataFactory pointer is not present
      * 
      *      @param user User name whose devices we want to get.
      *      
      *      @return Vector of devices belonging to the user.
      */
-    std::vector<Device> getDevices(const std::string &user) const;
+    DeviceVec getDevices(const std::string &user) const;
 
     /**
      *      @brief Method used to obtain all devices.
@@ -79,10 +80,23 @@ public:
      *      
      *      @return Vector of all devices.
      */
-    std::vector<Device> getDevices() const;
+    DeviceVec getDevices() const;
 
-    std::vector<Device> getDevices(double latitude, double longitude,
-                                   double kilometersRadius, DataType dataType) const;
+
+    /**
+     *      @brief Method used to obtain devices in a given radius and with a given type
+     * 
+     *      @throws PairlyLibException if the dataFactory pointer is not present
+     *      
+     *      @param longitude Geographical longitude
+     *      @param latitude Geographical latitude
+     *      @param kilometersRadius Radius in kilometers
+     *      @dataType type of data measured by devices
+     * 
+     *      @return Vector of data samples.
+     */
+    DeviceVec getDevices(double latitude, double longitude,
+                         double kilometersRadius, DataType dataType) const;
 
     /**
      *      @brief Method used to get data from a single device. It is possible to
@@ -102,7 +116,7 @@ public:
      *      
      *      @return Vector of data samples.
      */
-    std::vector<Data> getDeviceData(int deviceId, int hourInterval, int after = 0, int before = std::numeric_limits<int>::max()) const;
+    DataVec getDeviceData(int deviceId, int hourInterval, int after = 0, int before = std::numeric_limits<int>::max()) const;
 
     /**
      *      @brief Method used to add a new device to the database.
@@ -153,9 +167,9 @@ public:
      *
      *      @return A vector of data samples  
      */
-    std::vector<Data> getAreaData(double latitude, double longitude,
-                                  double kilometersRadius, int after,
-                                  int before, int hoursInterval, DataType dataType) const;
+    DataVec getAreaData(double latitude, double longitude,
+                        double kilometersRadius, int after,
+                        int before, int hoursInterval, DataType dataType) const;
 
 private:
     PairlyDB() { }
@@ -166,11 +180,20 @@ private:
     
     void checkDataFactory() const;
 
+    /* Helper math methods */
     static int div_to_nearest(int n, int d);
-
     static double deg2rad(double);
     static double vincenty_distance(double latitude1, double longitude1, double latitude2,
                              double longitude2);
+
+    /**
+     * Key - time interval value
+     * Value - pair of sum of values and number of values
+     */
+    using DataIntervals = std::unordered_map<int, std::pair<double, int>>;
+
+    void getDataIntervals(DataIntervals &map, const DataVec &data, int hourInterval) const;
+    DataVec dataIntervalsToDataVec(DataIntervals &d) const;
 
     static const int MINUTE = 60;
     static const int HOUR = 3600;

@@ -6,9 +6,10 @@ enable_testing()
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 include_directories (${Boost_INCLUDE_DIRS})
 
+set(CMAKE_REQUIRED_FLAGS "-Werror")
 
 
-
+set(UNDEFINED_BEHAVIOR_SANITIZER_FLAG "-fsanitize=undefined")
 
 # TODO: set Debug or release
 set(CMAKE_BUILD_TYPE Release)

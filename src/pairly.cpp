@@ -4,7 +4,6 @@
 
 #include <algorithm>
 #include <iostream>
-#include <unordered_map>
 
 PairlyDB& PairlyDB::instance()
 {
@@ -74,14 +73,14 @@ Device PairlyDB::getDevice(int deviceId) const
     return dataFactory->getDeviceById(deviceId);
 }
 
-std::vector<Device> PairlyDB::getDevices(const std::string &user) const
+DeviceVec PairlyDB::getDevices(const std::string &user) const
 {
     checkDataFactory();
 
     return dataFactory->getDevices(user);
 }
 
-std::vector<Device> PairlyDB::getDevices() const
+DeviceVec PairlyDB::getDevices() const
 {
     checkDataFactory();
 
@@ -104,26 +103,11 @@ bool PairlyDB::isInRadius(const Device &dev, double latitude, double longitude, 
     return  (dist <= radius);
 }
 
-std::vector<Data> PairlyDB::getDeviceData(int deviceId, int hourInterval, int after, int before) const
+void PairlyDB::getDataIntervals(DataIntervals &map, const DataVec &data, int hourInterval) const
 {
-    checkDataFactory();
-
-    std::vector<Data> data = dataFactory->getDeviceData(deviceId, after, before);
-
-    if (data.empty())
-        return data;
-
-    if (hourInterval == 0)
-        return data;
-
-    /* Key - result element time value
-     * value - pair of sum of measuered values and number of measuered values
-     */
-    std::unordered_map<int, std::pair<double, int>> map;
-
     int interval = hourInterval * HOUR;
 
-    for (Data &d : data) {
+    for (const Data &d : data) {
         int rounded = div_to_nearest(d.second, interval) * interval;
 
         auto it = map.find(rounded);
@@ -135,16 +119,38 @@ std::vector<Data> PairlyDB::getDeviceData(int deviceId, int hourInterval, int af
             it->second.second++;
         }
     }
+}
 
-    std::vector<Data> result;
-    for (auto it = map.begin(); it != map.end(); it++) {
-        result.push_back(std::make_pair(it->second.first / it->second.second, it->first));
+DataVec PairlyDB::dataIntervalsToDataVec(DataIntervals &d) const
+{
+    DataVec result;
+    for (auto it = d.begin(); it != d.end(); it++) {
+        result.push_back(std::make_pair(it->second.first / (double) it->second.second, it->first));
     }
 
     std::sort(result.begin(), result.end(), [](auto &left, auto &right) {
                             return left.second < right.second;});
 
     return result;
+}
+
+DataVec PairlyDB::getDeviceData(int deviceId, int hourInterval, int after, int before) const
+{
+    checkDataFactory();
+
+    DataVec data = dataFactory->getDeviceData(deviceId, after, before);
+
+    if (data.empty())
+        return data;
+
+    if (hourInterval == 0)
+        return data;
+
+    DataIntervals map;
+    
+    getDataIntervals(map, data, hourInterval);
+
+    return dataIntervalsToDataVec(map);
 }
 
 void PairlyDB::addDevice(const Device &device)
@@ -168,36 +174,37 @@ void PairlyDB::addData(int deviceId, const Data &data)
     dataFactory->addData(deviceId, data);
 }
 
-std::vector<Device> PairlyDB::getDevices(double longitude, double latitude,
+DeviceVec PairlyDB::getDevices(double latitude, double longitude,
                                          double kilometersRadius, DataType dataType) const
 {
     checkDataFactory();
 
-    std::vector<Device> devices = dataFactory->getDevices();
-    std::vector<Device> filtered;
+    DeviceVec devices = dataFactory->getDevices();
+    DeviceVec filtered;
 
     for (Device &dev : devices) {
-        if (dev.dataType == dataType && isInRadius(dev, longitude, latitude, kilometersRadius))
+        if (dev.dataType == dataType && isInRadius(dev, latitude, longitude, kilometersRadius))
             filtered.push_back(dev);
     }
 
     return filtered;
 }
 
-std::vector<Data> PairlyDB::getAreaData(double longitude, double latitude,
+DataVec PairlyDB::getAreaData(double latitude, double longitude,
                                         double kilometersRadius, int after,
                                         int before, int hoursInterval, DataType dataType) const
 {
+    checkDataFactory();
 
-    std::vector<Data> data;
+    DataIntervals map;
+    DeviceVec devices = getDevices(latitude, longitude, kilometersRadius, dataType);
 
-    int time = after;
+    for (const Device &dev : devices) {
+        DataVec devData = dataFactory->getDeviceData(dev.id, after, before);
 
-    while (time < before) {
-        data.emplace_back(0.0, time);
-        time += hoursInterval * 60;
+        getDataIntervals(map, devData, hoursInterval);
     }
 
-    // TODO: calculate actual data
-    return data;
+
+    return dataIntervalsToDataVec(map);
 }
