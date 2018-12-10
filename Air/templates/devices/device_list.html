@@ -7,7 +7,7 @@
     <h2>This is a list of your devices:</h2>
     <ul class="devices">
     {% for device in devices %}
-        <a href="{% url 'device_info' public_key=device.public_key %}" style="color:black;" ><li>Device with public key: {{device.public_key}}</li></a>
+        <a href="{% url 'device_info' name=device.name %}" style="color:black;" ><li>Device with public key: {{device.public_key}}</li></a>
     {% endfor %}
     </ul>
 {% else %}

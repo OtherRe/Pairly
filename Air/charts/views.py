@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+import random
+import django
+import datetime
 
-# Create your views here.
-
-
-def index(response):
-    return render(response, 'charts/index.html') 
+def charts(request):
+    return render(request, 'charts/charts.html')

@@ -2,11 +2,12 @@ from django import forms
 from django.forms import ModelForm, ValidationError
 from .models import Device, Location
 from .validators import validate_latitude, validate_longitute
+from Crypto.PublicKey import RSA
 
 class NewDeviceForm(ModelForm):
     class Meta:
         model = Device
-        fields = ['public_key', 'data_type', 'location']
+        fields = ['name', 'data_type', 'location', 'public_key']
 
     
     def clean_location(self):
@@ -18,6 +19,12 @@ class NewDeviceForm(ModelForm):
     def clean_public_key(self):
         data = self.cleaned_data['public_key']
         
+        try:
+            #RSA.importKey(data)
+            a =1
+        except:
+            raise ValidationError("Wrong public key")
+
         if Device.objects.filter(public_key=data):
             raise ValidationError('This public key already exists. Please check again.')
         

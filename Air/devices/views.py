@@ -21,6 +21,7 @@ def new_device(request):
         form = NewDeviceForm(request.POST)
         if form.is_valid():
             device = Device()
+            device.name       = form.cleaned_data.get('name')
             device.public_key = form.cleaned_data.get('public_key')
             device.data_type  = form.cleaned_data.get('data_type')
             device.location   = form.cleaned_data.get('location')
@@ -33,9 +34,9 @@ def new_device(request):
     return render(request, 'devices/new_device.html', {'form': form})
 
 @login_required(redirect_field_name='login')
-def device_info(request, public_key):
+def device_info(request, name):
   #  public_key = request.GET.get('public_key')
-    if not Device.objects.filter(public_key=public_key):
+    if not Device.objects.filter(name=name):
         return HttpResponseNotFound() 
 
-    return render(request, 'devices/device_info.html', {'public_key':public_key})       
+    return render(request, 'devices/device_info.html', {'name':name})       

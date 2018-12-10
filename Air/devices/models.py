@@ -32,7 +32,7 @@ class Data(models.Model):
         abstract = True
 
 class Device(models.Model):
-    public_key = models.CharField(max_length=30)
+    name = models.CharField(verbose_name = 'Device name', name='name', max_length=25, default="")
     data_type = models.CharField(max_length=7, choices=(
         ('CO', 'CO'), ('PM2.5', 'PM2.5'),('PM10', 'PM10'))) #what kind of air particles it measures
 
@@ -40,8 +40,10 @@ class Device(models.Model):
     location = models.EmbeddedModelField(
         model_container=Location,
     )
+    public_key = models.TextField('Public key', 'public_key', unique=True)
     data_points = models.ArrayModelField(
         model_container=Data,
     )
+
     def __str__(self):
         return 'Device {}'.format(self.public_key)

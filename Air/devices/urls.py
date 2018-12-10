@@ -20,5 +20,5 @@ from . import views
 urlpatterns = [
   path('users_devices', views.users_devices, name="users_devices"),
   path('new_device', views.new_device, name="add_new_device"), 
-  path('device_info/<public_key>', views.device_info, name='device_info'), 
+  path('device_info/<name>', views.device_info, name='device_info'), 
 ]
