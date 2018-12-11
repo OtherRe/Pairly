@@ -19,5 +19,5 @@ from . import views
 
 urlpatterns = [
     path('', views.charts, name="charts"),
-    path('getData', views.getData, name="getData")
+    path('GetData/', views.GetData.as_view(), name="GetData"),
 ]

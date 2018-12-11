@@ -3,7 +3,7 @@
 Hello 111
 <canvas id="myChart" width="400" height="200"></canvas>
 
-<form>
+<form id="get_data_form">
     <input type="hidden" name="longitude" id="id_longitude">
     <input type="hidden" name="latitude" id="id_latitude">
 
@@ -19,7 +19,7 @@ Hello 111
         <label for="id_radius">Radius:</label>
         <input class='form-control col-sm-6 col-md-4 col-lg-2' type="number" min="0" name="radius" step="any" required id="id_radius">
     </div>
-    <button class='btn-primary' onclick="makeChart()">Click me!</button>
+    <button type="button" class='btn-primary' onclick="makeChart()">Click me!</button>
 </form>
 
 {% endblock %}
@@ -70,8 +70,14 @@ Hello 111
     <script>
         let i = 0
         function makeChart(){
-            var httpClient = new HttpClient()
-            httpClient.getJSON("{% url 'getData' %}", data => {
+            const form = document.getElementById('get_data_form')
+            if(!form.checkValidity()) return
+
+
+            const httpClient = new HttpClient()
+            const formData = new FormData(form)
+            console.log(httpClient.GETArgs(formData))
+            httpClient.getJSONFromForm("{% url 'GetData' %}", formData, data => {
                 myChart.data.labels = data.labels;
                 myChart.data.datasets[0].data = data.values;
                 myChart.update();

@@ -20,6 +20,8 @@ def signup(request):
         form = forms.SignUpForm()
     return render(request, 'users/signup.html', {'form': form})
 
+# class UserProfile()
+
 def profile(request):
     if request.user.is_authenticated:
         return render(request, 'users/profile.html')
