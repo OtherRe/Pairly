@@ -1,4 +1,4 @@
 django>=2.1.4
 djongo>=1.2.30
 pycrypto>=2.6
-matplotlib
+

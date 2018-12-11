@@ -21,7 +21,7 @@ class NewDeviceForm(ModelForm):
         
         try:
             #RSA.importKey(data)
-            a =1
+            pass
         except:
             raise ValidationError("Wrong public key")
 
