@@ -18,5 +18,5 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
- #  path('', views.simple, name="charts"),
+    path('GetData/', views.GetData.as_view(), name="GetData"), 
 ]
