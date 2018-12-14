@@ -7,6 +7,32 @@ find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 include_directories (${Boost_INCLUDE_DIRS})
 
 
+
+if (${BUILD_MONGO})
+    file(GLOB SOURCES "src/*.cpp")
+    add_library(pairly-db SHARED ${SOURCES})
+
+    find_package(libmongocxx REQUIRED)
+    find_package(libbsoncxx REQUIRED)
+    SET(CMAKE_EXE_LINKER_FLAGS 
+          "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,/usr/local/lib")
+
+    target_include_directories(pairly-db PRIVATE ${LIBMONGOCXX_INCLUDE_DIRS}
+                                                ${LIBBSONCXX_INCLUDE_DIRS})
+
+    target_link_libraries(pairly-db PRIVATE ${LIBMONGOCXX_LIBRARIES}
+                                            ${LIBBSONCXX_LIBRARIES})
+
+    target_compile_definitions(pairly-db PRIVATE ${LIBMONGOCXX_DEFINITIONS})
+
+else()
+    set(SOURCES "src/pairly.cpp"
+                "src/data-factory-mock.cpp")
+    add_library(pairly-db SHARED ${SOURCES})
+endif()
+
+
+
 # TODO: set Debug or release
 set(CMAKE_BUILD_TYPE Release)
 
@@ -17,10 +43,8 @@ if (${SANITIZE})
 endif()
  
 include_directories(include)
- 
-file(GLOB SOURCES "src/*.cpp")
- 
-add_library(pairly-db SHARED ${SOURCES})
+
+
 
 file(GLOB TEST_SRCS "tests/*.cpp")
 
