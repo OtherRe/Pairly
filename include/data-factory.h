@@ -60,6 +60,21 @@ public:
      */
     virtual Device getDeviceById(int id) = 0;
 
+    /**
+     *      @brief Method used to obtain devices in a given radius and with a given type
+     * 
+     *      @throws PairlyLibException if the dataFactory pointer is not present
+     *      
+     *      @param longitude Geographical longitude
+     *      @param latitude Geographical latitude
+     *      @param kilometersRadius Radius in kilometers
+     *      @dataType type of data measured by devices
+     * 
+     *      @return Vector of data samples.
+     */
+    virtual DeviceVec getDevices(double latitude, double longitude,
+                                 double kilometersRadius, DataType dataType) const = 0;
+
 
     /**
      *  @brief Get data samples from the device.

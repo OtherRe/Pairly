@@ -22,20 +22,6 @@ public:
      *      @return Reference to instance of PairlyDB class.
      */
     static PairlyDB& instance();
-
-    /**
-     *      @brief Helper method used to determine, if a given device lies within a
-     *      specified area. The area is specified as a geographical point and a radius
-     *      from that point.
-     * 
-     *      @param dev Device reference
-     *      @param latitude Geographical latitude
-     *      @param longitude Geographical longitude
-     *      @param radius Radius in kilometers
-     * 
-     *      @return Check if the device lies in the area
-     */
-    static bool isInRadius(const Device &dev, double latitude, double longitude, double radius);
     
     /**
      *      @brief Method used to pass a pointer to DataFactory, which is an abstract class
@@ -182,9 +168,7 @@ private:
 
     /* Helper math methods */
     static int div_to_nearest(int n, int d);
-    static double deg2rad(double);
-    static double vincenty_distance(double latitude1, double longitude1, double latitude2,
-                             double longitude2);
+
 
     /**
      * Key - time interval value
