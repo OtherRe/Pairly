@@ -1,28 +1,22 @@
 var mymap;
+var currentPositionMarker;
+var circle;
+var deviceMarkers = new Array();
+var greenIcon = new L.Icon({
+    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+var currentMapBounds;
 
-// L.marker([51.5, -0.09]).addTo(mymap)
-//     .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
-
-
-
-// L.circle([51.508, -0.11], 500, {
-//     color: 'red',
-//     fillColor: '#f03',
-//     fillOpacity: 0.5
-// }).addTo(mymap).bindPopup("I am a circle.");
-
-// L.polygon([
-//     [51.509, -0.08],
-//     [51.503, -0.06],
-//     [51.51, -0.047]
-// ]).addTo(mymap).bindPopup("I am a polygon.");
-
-
-// var popup = L.popup();
 
 function mapSetup(url) {
     var defaultLng = document.getElementById('id_longitude').value
     var defaultLat = document.getElementById('id_latitude').value
+    var defaultRadius = document.getElementById('id_radius').value
 
     mymap = L.map('mapid').setView([defaultLat, defaultLng], 13);
 
@@ -33,14 +27,22 @@ function mapSetup(url) {
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         id: 'mapbox.streets'
     }).addTo(mymap);
-    showDevices(url);
+
+    mymap.on('click', onMapClick);
+
+    currentPositionMarker = L.marker([defaultLat, defaultLng], {
+        'icon': greenIcon
+    })
+    currentPositionMarker.addTo(mymap);
+
+    currentMapBounds = mymap.getBounds()
+
+    showDevices(url, defaultLng, defaultLat, defaultRadius);
+    putCircle(defaultLng, defaultLat, defaultRadius)
 }
 
-function showDevices(url) {
-    const lng = document.getElementById('id_longitude').value
-    const lat = document.getElementById('id_latitude').value
+function showDevices(url, lng, lat, radius) {
     const data_type = document.getElementById('id_data_type').value
-    const radius = document.getElementById('id_radius').value
 
     const httpClient = new HttpClient()
     httpClient.getJSONWithArgs(url, [
@@ -58,19 +60,46 @@ function showDevices(url) {
  * Puts a mark on the map for every device in devices
  */
 function markDevices(devices) {
+    deviceMarkers.forEach((m) => mymap.removeLayer(m))
+    deviceMarkers = new Array()
+
     for (const info of devices) {
-        L.marker([info.lat, info.lng]).addTo(mymap)
+        var m = L.marker([info.lat, info.lng])
+        m.addTo(mymap)
             .bindPopup(`Device with id ${info.id}`)
+        deviceMarkers.push(m)
     }
 }
 
-function onMapClick(e) {
-    popup
-        .setLatLng(e.latlng)
-        .setContent("You clicked the map at " + e.latlng.toString())
-        .openOn(mymap);
+function putCircle(lng, lat, radius) {
+    if (circle)
+        mymap.removeLayer(circle)
+
+    circle = L.circle([lat, lng], radius * 1000, {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5
+    })
+
+    circle.addTo(mymap)
 }
 
+function onMapClick(e) {
+    currentPositionMarker
+        .setLatLng(e.latlng)
 
+    const lng = e.latlng.lng
+    const lat = e.latlng.lat
+    const radius = document.getElementById('id_radius').value
 
-// mymap.on('click', onMapClick);
+    //modyfing the form
+    document.getElementById('id_longitude').value = lng
+    document.getElementById('id_latitude').value = lat
+
+    putCircle(lng, lat, radius)
+
+    if (!currentMapBounds.contains(e.latlng)) {
+        currentMapBounds = mymap.getBounds()
+        showDevices('/data/GetDevicesInfo/', lng, lat, (currentMapBounds.getNorth() - currentMapBounds.getSouth()) / 2 * 111)
+    }
+}

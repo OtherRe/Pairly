@@ -61,8 +61,8 @@ class GetDevicesInfo(APIView):
         # return Response(data_response.data)
         return Response({'devices': [
                 {'lat' : 52.237049, 'lng':21.017532, 'id':1},
-                {'lat' : 52.247049, 'lng':21.017532, 'id':2},
-                {'lat' : 52.257049, 'lng':21.017532, 'id':3},
+                # {'lat' : 52.247049, 'lng':21.017532, 'id':2},
+                # {'lat' : 52.227049, 'lng':21.017532, 'id':3},
         ]})
 
 class PostData(APIView):

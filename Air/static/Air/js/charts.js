@@ -43,7 +43,6 @@ function makeChart(dataUrl) {
 
     const httpClient = new HttpClient()
     const formData = new FormData(form)
-    console.log(httpClient.GETArgs(formData))
     httpClient.getJSONWithArgs(dataUrl, formData.entries(), data => {
         myChart.data.labels = data.time_axis;
         myChart.data.datasets[0].data = data.value_axis;
