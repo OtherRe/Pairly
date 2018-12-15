@@ -44,6 +44,7 @@ class Device(models.Model):
     data_points = models.ArrayModelField(
         model_container=Data,
     )
+    auth_token = models.CharField(max_length=50)
 
     def __str__(self):
         return 'Device {}'.format(self.public_key)

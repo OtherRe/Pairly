@@ -18,5 +18,7 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('GetData/', views.GetData.as_view(), name="GetData"), 
+    path('GetAreaData/', views.GetAreaData.as_view(), name="GetAreaData"), 
+    path('GetDeviceData/', views.GetDeviceData.as_view(), name="GetDeviceData"), 
+    path('GetDevicesInfo/', views.GetDevicesInfo.as_view(), name="GetDevicesInfo"), 
 ]

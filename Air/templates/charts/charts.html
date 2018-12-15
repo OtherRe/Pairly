@@ -1,11 +1,21 @@
 {% extends 'base.html' %}
+
+{% block links %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+    crossorigin="">
+
+{% load static %}
+<link rel='stylesheet' href="{% static 'Air/css/map.css' %}">
+{% endblock %}
+
+
 {% block body %}
-Hello 111
 <canvas id="myChart" width="400" height="200"></canvas>
+<div id='mapid'></div>
 
 <form id="get_data_form">
-    <input type="hidden" value="20" name="longitude" id="id_longitude">
-    <input type="hidden" value="20" name="latitude" id="id_latitude">
+    <input type="hidden" value="21.017532" name="longitude" id="id_longitude">
+    <input type="hidden" value="52.237049" name="latitude" id="id_latitude">
 
     <div class="form-group">
         <label for="id_data_type">Data type:</label>
@@ -17,80 +27,42 @@ Hello 111
     </div>
     <div class="form-group">
         <label for="id_radius">Radius:</label>
-        <input class='form-control col-sm-6 col-md-4 col-lg-2' type="number" min="0" name="radius" step="any" required id="id_radius">
+        <input class='form-control col-sm-6 col-md-4 col-lg-2' value=1 type="number" min="0" name="radius" step="any"
+            required id="id_radius">
     </div>
     <div class="form-group">
         <label for="id_after">Begin date:</label>
-        <input class='form-control col-sm-6 col-md-4 col-lg-2' type="date" name="after" required id="id_after">
+        <input class='form-control col-sm-6 col-md-4 col-lg-2' type="date" value="2018-12-17" name="after" required id="id_after">
     </div>
     <div class="form-group">
         <label for="id_before">End date:</label>
-        <input class='form-control col-sm-6 col-md-4 col-lg-2' type="date" name="before" required id="id_before">
+        <input class='form-control col-sm-6 col-md-4 col-lg-2' type="date" value="2018-12-25" name="before" required id="id_before">
     </div>
-    <button type="button" class='btn-primary' onclick="makeChart()">Click me!</button>
+    <button type="button" class='btn-primary' id="send_request_id">Click me!</button>
 </form>
 
 {% endblock %}
 
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+    crossorigin=""></script>
+
+{% load static %}
+<script src="{% static 'Air/js/HttpClient.js' %}"></script>
+{% load static %}
+<script src="{% static 'Air/js/map.js' %}"></script>
+{% load static %}
+<script src="{% static 'Air/js/charts.js' %}"></script>
+
 <script>
-    var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            datasets: [{
-                label: 'Time',
-                data:[],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                lineTension:0,
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            }
-        }
-    });
-    </script>
-    {% load static %}
-    <script src="{% static 'charts/HttpClient.js' %}"></script>
-    <script>
-        let i = 0
-        function makeChart(){
-            const form = document.getElementById('get_data_form')
-            if(!form.checkValidity()) return
+    mapSetup("{% url 'GetDevicesInfo' %}")
 
+    const button = document.getElementById('send_request_id')
+    button.onclick = () => {
+        makeChart("{% url 'GetAreaData' %}")
+        showDevices("{% url 'GetDevicesInfo' %}")
+    }
+</script>
 
-            const httpClient = new HttpClient()
-            const formData = new FormData(form)
-            console.log(httpClient.GETArgs(formData))
-            httpClient.getJSONFromForm("{% url 'GetData' %}", formData, data => {
-                myChart.data.labels = data.labels;
-                myChart.data.datasets[0].data = data.values;
-                myChart.update();
-            });
-        }
-    </script>
 {% endblock %}
-

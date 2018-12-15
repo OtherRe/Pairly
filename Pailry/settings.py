@@ -40,6 +40,16 @@ INSTALLED_APPS = [
     'Air.apps.AirConfig',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': (
+        'Air.data.throttling.DeviceRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        # 'device': '1/hour',
+        'device':'1/second'
+    }
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

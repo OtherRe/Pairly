@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
-from django.views.generic.edit import FormView, CreateView
 from .forms import NewDeviceForm
-from .models import Device, Data
+from .models import Device
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from datetime import datetime
 from django.http import HttpResponseNotFound
+import secrets
 # Create your views here.
 
 @login_required(redirect_field_name='login')
@@ -27,6 +26,7 @@ def new_device(request):
             device.location   = form.cleaned_data.get('location')
             device.data_points= []
             device.user = request.user
+            device.auth_token = secrets.token_urlsafe()
             device.save()
             return redirect('users_devices')
     else:

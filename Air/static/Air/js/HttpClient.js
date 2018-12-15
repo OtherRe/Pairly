@@ -18,8 +18,8 @@ var HttpClient = function () {
       anHttpRequest.send(null);
     }
 
-  this.getJSONFromForm =
-    function (aUrl, formData, aCallback) {
+  this.getJSONWithArgs =
+    function (aUrl, data, aCallback) {
       var anHttpRequest = new XMLHttpRequest();
       anHttpRequest.onload =
         function () {
@@ -28,12 +28,12 @@ var HttpClient = function () {
           aCallback(data);
         }
       
-      anHttpRequest.open('GET', aUrl + this.GETArgs(formData), true);
-      anHttpRequest.send(formData);
+      anHttpRequest.open('GET', aUrl + this.GETArgs(data), true);
+      anHttpRequest.send(null);
     }
-  this.GETArgs = formData => {
+  this.GETArgs = data => {
     var args = "?"
-    for(const pair of formData.entries())
+    for(const pair of data)
       args += `${pair[0]}=${pair[1]}&`
     
     return args.substring(0, args.length - 1)

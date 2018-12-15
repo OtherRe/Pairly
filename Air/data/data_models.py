@@ -36,14 +36,12 @@ class DataResponse():
         :param data_request: DataRequest object
         :param db: Database object we want to use
         """
-
-        self.time_axis    = kwargs['time_axis'] if 'time_axis' in kwargs else []
-        self.value_axis   = kwargs['value_axis'] if 'value_axis' in kwargs else []
         self.data_request = kwargs['data_request'] if 'data_request' in kwargs else None
         self.db           = kwargs['db'] if 'db' in kwargs else None #!!!!!change later to cpp lib 
+        self.data         = {}
         self.requested_before = False
 
-    def get(self):
+    def getData(self):
         """
         Connects to a database, formats the data and stores it in
         value_axis and time_axis
@@ -52,18 +50,15 @@ class DataResponse():
         if self.requested_before:
             return self
         
-        self.time_axis  = ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"]#TODELETE
-        self.value_axis = [12, 1, 13, 5, 2, 4]                                  #TODELETE
+        self.data['time_axis']  = ["Reds", "Blue", "Yellow", "Green", "Purple", "Orange", 'rafal']#TODELETE
+        self.data['value_axis'] = [12, 11, 13, 5, 2, 4, 18]                                       #TODELETE
 
         if self.data_request is None:
-            self.time_axis  = []
-            self.value_axis = []
+            self.data = {}
+            return self
 
-        # time_value_pair_data = self.db.getAreaData(*self.data_request.to_list())
-        # self.time_axis = [pair[0] for pair in time_value_pair_data]
-        # self.value_axis =[pair[1] for pair in time_value_pair_data] #THIS IS CORRECT
-        
-        self.requested_before = True
+        # self.data = self.data_request.make_query(self.db)
+
         return self
 
     def reset(self):
@@ -73,25 +68,7 @@ class DataResponse():
         self.time_axis = []
         self.value_axis = []
 
-    def force_get(self):
-        self.reset()
-        self.get()
+    # def force_get(self):
+    #     self.reset()
+    #     self.get()
 
-
-class DataRequest():
-    """
-    Model that represents a request for a specific data.
-    Everything database need to know is coordinates, data_type
-    and radius
-    """
-    def __init__(self, longitude, latitude, data_type, radius, after, before):
-        self.longitude = longitude
-        self.latitude = latitude
-        self.data_type = data_type
-        self.radius = radius
-        self.after = time.mktime(after.timetuple())
-        self.before = time.mktime(before.timetuple())
-
-    def to_list(self):
-        return [self.latitude, self.longitude, self.radius, self.after, 
-                self.before, (self.before - self.after)/10, self.data_type]
