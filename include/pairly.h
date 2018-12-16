@@ -44,7 +44,7 @@ public:
      *      
      *      @return Instance of the device.
      */
-    Device getDevice(int deviceId) const;
+    Device getDevice(const std::string &deviceId) const;
     
     /**
      *      @brief Method used to obtain all devices belonging to the given user.
@@ -102,7 +102,7 @@ public:
      *      
      *      @return Vector of data samples.
      */
-    DataVec getDeviceData(int deviceId, int hourInterval, int after = 0, int before = std::numeric_limits<int>::max()) const;
+    DataVec getDeviceData(const std::string &deviceId, int hourInterval, int after = 0, int before = std::numeric_limits<int>::max()) const;
 
     /**
      *      @brief Method used to add a new device to the database.
@@ -111,8 +111,10 @@ public:
      *      @throws DataBaseException if the device with a given id already exists
      *      
      *      @param reference to a new device
+     * 
+     *      @return actual id of the device
      */
-    void addDevice(const Device &device);
+    std::string addDevice(const Device &device);
 
     /**
      *      @brief Method used to remove a device from a database.
@@ -120,7 +122,7 @@ public:
      *      @throws PairlyLibException if the dataFactory pointer is not present
      *      @throws DataBaseException if the device with a given id does not exist
      */
-    void removeDevice(int deviceId);
+    void removeDevice(const std::string &deviceId);
 
     /**
      *      @brief Add a new data sample to a given device.
@@ -131,7 +133,7 @@ public:
      *      @param deviceId unique id of a device
      *      @param data new data sample
      */
-    void addData(int deviceId, const Data &data);
+    void addData(const std::string &deviceId, const Data &data);
 
     /**
      *      @brief Method used to obtain data from a given area with a given time interval

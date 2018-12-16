@@ -28,7 +28,7 @@ void PairlyDB::checkDataFactory() const
         throw PairlyLibException("Data Factory must be already connected");
 }
 
-Device PairlyDB::getDevice(int deviceId) const
+Device PairlyDB::getDevice(const std::string &deviceId) const
 {
     checkDataFactory();
 
@@ -91,7 +91,7 @@ DataVec PairlyDB::dataIntervalsToDataVec(DataIntervals &d) const
     return result;
 }
 
-DataVec PairlyDB::getDeviceData(int deviceId, int hourInterval, int after, int before) const
+DataVec PairlyDB::getDeviceData(const std::string &deviceId, int hourInterval, int after, int before) const
 {
     checkDataFactory();
 
@@ -110,21 +110,21 @@ DataVec PairlyDB::getDeviceData(int deviceId, int hourInterval, int after, int b
     return dataIntervalsToDataVec(map);
 }
 
-void PairlyDB::addDevice(const Device &device)
+std::string PairlyDB::addDevice(const Device &device)
 {
     checkDataFactory();
 
-    dataFactory->addDevice(device);
+    return dataFactory->addDevice(device);
 }
 
-void PairlyDB::removeDevice(int deviceId)
+void PairlyDB::removeDevice(const std::string &deviceId)
 {
     checkDataFactory();
 
     dataFactory->removeDevice(deviceId);
 }
 
-void PairlyDB::addData(int deviceId, const Data &data)
+void PairlyDB::addData(const std::string &deviceId, const Data &data)
 {
     checkDataFactory();
 

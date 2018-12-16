@@ -21,7 +21,7 @@ std::vector<Device> DataFactoryMock::getDevices()
     return devices;
 }
 
-void DataFactoryMock::addDevice(const Device &dev)
+std::string DataFactoryMock::addDevice(const Device &dev)
 {
     for (auto it = devices.begin(); it != devices.end(); it++) {
         if (it->id == dev.id) {
@@ -31,9 +31,11 @@ void DataFactoryMock::addDevice(const Device &dev)
 
     map.insert(std::make_pair(dev.id, std::vector<Data>(0)));
     devices.push_back(dev);
+
+    return dev.id;
 }
 
-void DataFactoryMock::removeDevice(int deviceId)
+void DataFactoryMock::removeDevice(const std::string &deviceId)
 {
     for (auto it = devices.begin(); it != devices.end(); it++) {
         if (it->id == deviceId) {
@@ -43,7 +45,7 @@ void DataFactoryMock::removeDevice(int deviceId)
     }
 }
 
-Device DataFactoryMock::getDeviceById(int id)
+Device DataFactoryMock::getDeviceById(const std::string &id)
 {
     for (auto it = devices.begin(); it != devices.end(); it++) {
         if (it->id == id) {
@@ -54,7 +56,7 @@ Device DataFactoryMock::getDeviceById(int id)
     throw DataBaseException("Element with such id does not exist");
 }
 
-std::vector<Data> DataFactoryMock::getDeviceData(int deviceId, int timeAfter,
+std::vector<Data> DataFactoryMock::getDeviceData(const std::string &deviceId, int timeAfter,
                                                  int timeBefore)
 {
     auto it = map.find(deviceId);
@@ -73,7 +75,7 @@ std::vector<Data> DataFactoryMock::getDeviceData(int deviceId, int timeAfter,
     return result;
 }
 
-void DataFactoryMock::addData(int deviceId, const Data &data)
+void DataFactoryMock::addData(const std::string &deviceId, const Data &data)
 {
     auto it = map.find(deviceId);
 

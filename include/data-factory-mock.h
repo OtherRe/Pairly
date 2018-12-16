@@ -11,12 +11,12 @@ class DataFactoryMock : public DataFactory {
 public:
     virtual bool isConnected();
     virtual DeviceVec getDevices();
-    virtual void addDevice(const Device &dev);
-    virtual void removeDevice(int deviceId);
-    virtual Device getDeviceById(int id);
-    virtual DataVec getDeviceData(int deviceId,
+    virtual std::string addDevice(const Device &dev);
+    virtual void removeDevice(const std::string &id);
+    virtual Device getDeviceById(const std::string &id);
+    virtual DataVec getDeviceData(const std::string &deviceId,
                                             int timeAfter = 0, int timeBefore = std::numeric_limits<int>::max());
-    virtual void addData(int deviceId, const Data &data);
+    virtual void addData(const std::string &deviceId, const Data &data);
     virtual DeviceVec getDevices(const std::string &user);
     virtual DeviceVec getDevices(double latitude, double longitude,
                                  double kilometersRadius, DataType dataType) const;
@@ -25,7 +25,7 @@ public:
     void disconnect();
 
 private:
-    using DeviceDataMap = std::map<int, DataVec>;
+    using DeviceDataMap = std::map<std::string, DataVec>;
 
     /**
      *      @brief Helper method used to determine, if a given device lies within a

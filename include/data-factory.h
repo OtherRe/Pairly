@@ -41,15 +41,17 @@ public:
      *  @brief Add a new device to the database.
      * 
      *  @param dev A reference to a new device.
+     * 
+     *  @return actual id of the device
      */
-    virtual void addDevice(const Device &dev) = 0;
+    virtual std::string addDevice(const Device &dev) = 0;
     
     /**
      *  @brief Remove existing device.
      * 
      *  @param deviceId Unique id of device which should be removed.
      */
-    virtual void removeDevice(int deviceId) = 0;
+    virtual void removeDevice(const std::string &deviceId) = 0;
 
     /**
      *  @brief Get a single device
@@ -58,7 +60,7 @@ public:
      * 
      *  @return Device instance.
      */
-    virtual Device getDeviceById(int id) = 0;
+    virtual Device getDeviceById(const std::string &id) = 0;
 
     /**
      *      @brief Method used to obtain devices in a given radius and with a given type
@@ -88,7 +90,7 @@ public:
      * 
      *  @return Vector of data samples.
      */
-    virtual DataVec getDeviceData(int deviceId, int timeAfter = 0,
+    virtual DataVec getDeviceData(const std::string &deviceId, int timeAfter = 0,
                                   int timeBefore = std::numeric_limits<int>::max()) = 0;
 
     /**
@@ -97,7 +99,7 @@ public:
      *  @param deviceId Unique device id.
      *  @param data A reference to new data sample.
      */
-    virtual void addData(int deviceId, const Data &data) = 0;
+    virtual void addData(const std::string &deviceId, const Data &data) = 0;
 
     virtual DeviceVec getDevices(const std::string &user) = 0;
 };

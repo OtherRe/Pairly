@@ -9,15 +9,16 @@ enum class DataType {
 
 class Device {
 public:
-    int id;
+    std::string id;
     std::string user;
     std::string pubKey;
-    double longitude;
+    std::string name;
     double latitude;
+    double longitude;
     DataType dataType;
 
     Device() { }
-    Device(int id) : id(id) {
+    Device(const std::string &id) : id(id) {
         user = "";
         pubKey = "";
         longitude = 0.0;
@@ -25,9 +26,10 @@ public:
         dataType = DataType::CO;
     }
 
-    Device(int id, const std::string &user, const std::string &pubKey, double latitude,
-           double longitude, DataType dataType) : id(id), user(user), pubKey(pubKey), longitude(longitude),
-           latitude(latitude),  dataType(dataType) { }
+    Device(const std::string &id, const std::string &user, const std::string &pubKey,
+           const std::string &name, double latitude,
+           double longitude, DataType dataType) : id(id), user(user), pubKey(pubKey),  name(name),
+           latitude(latitude), longitude(longitude), dataType(dataType) { }
 
 
     bool operator==(const Device &rhs) {
