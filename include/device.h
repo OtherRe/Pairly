@@ -37,6 +37,17 @@ public:
                 longitude == rhs.longitude && latitude == rhs.latitude &&
                 dataType == rhs.dataType);
     }
+
+    std::string devTypeStr() {
+        switch (dataType) {
+        case DataType::CO:
+            return "CO";
+        case DataType::PM2_5:
+            return "PM2_5";
+        case DataType::PM10:
+            return "PM10";
+        }
+    }
 };
 
 #endif
