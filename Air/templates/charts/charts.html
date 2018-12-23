@@ -18,8 +18,8 @@
         Show data
     </button>
 
-    <input type="hidden" value="21.017532" name="longitude" id="id_longitude">
-    <input type="hidden" value="52.237049" name="latitude" id="id_latitude">
+    <input type="hidden" value="{%if lng%} {{lng}} {% else %} 21.017532 {% endif %}" name="longitude" id="id_longitude">
+    <input type="hidden" value="{%if lat%} {{lat}} {% else %} 52.237049 {% endif %}" name="latitude" id="id_latitude">
 
     <div class="form-group">
         <label for="id_data_type">Data type:</label>
@@ -52,15 +52,15 @@
     crossorigin=""></script>
 
 {% load static %}
-<script src="{% static 'Air/js/HttpClient.js' %}"></script>
+<script src="{% static 'Air/js/utils/HttpClient.js' %}"></script>
 {% load static %}
-<script src="{% static 'Air/js/map.js' %}"></script>
+<script src="{% static 'Air/js/utils/map_utils.js' %}"></script>
 {% load static %}
-<script src="{% static 'Air/js/charts.js' %}"></script>
+<script src="{% static 'Air/js/charts/chart_map.js' %}"></script>
+{% load static %}
+<script src="{% static 'Air/js/charts/charts.js' %}"></script>
 
 <script>
-    mapSetup("{% url 'GetDevicesInfo' %}")
-
     const button = document.getElementById('send_request_id')
     button.onclick = () => {
         makeChart("{% url 'GetAreaData' %}")

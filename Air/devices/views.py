@@ -31,6 +31,9 @@ def new_device(request):
             return redirect('users_devices')
     else:
         form = NewDeviceForm()
+        #add location of last device of a user as default value
+        form.fields['latitude'].value = 52.237049
+        form.fields['latitude'].value = 21.017532
     return render(request, 'devices/new_device.html', {'form': form})
 
 @login_required(redirect_field_name='login')
