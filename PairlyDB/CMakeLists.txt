@@ -3,14 +3,29 @@ project(pairly-db)
 
 enable_testing()
 
-find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+find_package(Boost COMPONENTS unit_test_framework system python3 REQUIRED)
+
+find_package(PythonLibs REQUIRED)
+FIND_PACKAGE(PythonInterp)
+
+#find_package(Boost 1.64.0 REQUIRED COMPONENTS system python)
+message(STATUS "PYTHON_LIBRARIES = ${PYTHON_LIBRARIES}")
+message(STATUS "PYTHON_EXECUTABLE = ${PYTHON_EXECUTABLE}")
+message(STATUS "PYTHON_INCLUDE_DIRS = ${PYTHON_INCLUDE_DIRS}")
+message(STATUS "Boost_LIBRARIES = ${Boost_LIBRARIES}")
+
+include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories (${Boost_INCLUDE_DIRS})
-
-
 
 if (${BUILD_MONGO})
     file(GLOB SOURCES "src/*.cpp")
     add_library(pairly-db SHARED ${SOURCES})
+
+    # Python lib
+    add_library(pypairly SHARED python-lib/pairly-db.cpp)
+    target_link_libraries(pypairly ${Boost_LIBRARIES} pairly-db)
+    target_link_libraries(pypairly ${PYTHON_LIBRARIES})
+    set_target_properties(pypairly PROPERTIES PREFIX "")
 
     find_package(libmongocxx REQUIRED)
     find_package(libbsoncxx REQUIRED)
@@ -18,6 +33,9 @@ if (${BUILD_MONGO})
           "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,/usr/local/lib")
 
     target_include_directories(pairly-db PRIVATE ${LIBMONGOCXX_INCLUDE_DIRS}
+                                                ${LIBBSONCXX_INCLUDE_DIRS})
+
+    target_include_directories(pypairly PRIVATE ${LIBMONGOCXX_INCLUDE_DIRS}
                                                 ${LIBBSONCXX_INCLUDE_DIRS})
 
     target_link_libraries(pairly-db PRIVATE ${LIBMONGOCXX_LIBRARIES}
@@ -31,8 +49,6 @@ else()
                 "src/data-factory-mock.cpp")
     add_library(pairly-db SHARED ${SOURCES})
 endif()
-
-
 
 # TODO: set Debug or release
 set(CMAKE_BUILD_TYPE Debug)

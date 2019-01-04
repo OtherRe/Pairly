@@ -159,6 +159,21 @@ public:
                         double kilometersRadius, int after,
                         int before, int hoursInterval, DataType dataType) const;
 
+    DataVec getDeviceData2(const std::string &deviceId, int hourInterval)
+    {
+    return PairlyDB::instance().getDeviceData(deviceId, hourInterval, 0, std::numeric_limits<int>::max());
+    }
+
+    DataVec getDeviceData3(const std::string &deviceId, int hourInterval, int after)
+    {
+        return PairlyDB::instance().getDeviceData(deviceId, hourInterval, after, std::numeric_limits<int>::max());
+    }
+
+    DataVec getDeviceData4(const std::string &deviceId, int hourInterval, int after, int before)
+    {
+        return PairlyDB::instance().getDeviceData(deviceId, hourInterval, after, before);
+    }  
+
 private:
     PairlyDB() { }
     PairlyDB(const PairlyDB&) = delete;
