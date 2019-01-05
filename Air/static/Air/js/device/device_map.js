@@ -1,7 +1,5 @@
-// var defaultLng = document.getElementById('id_longitude').value
-// var defaultLat = document.getElementById('id_latitude').value
-var defaultLng = 21.017532
-var defaultLat = 52.237049
+const defaultLng = document.getElementById('id_longitude').value
+const defaultLat = document.getElementById('id_latitude').value
 
 var mymap = mapSetup(defaultLng, defaultLat);
 console.log("devicemap")
