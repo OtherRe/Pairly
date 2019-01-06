@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block links %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
     crossorigin="">
 
-{% load static %}
 <link rel='stylesheet' href="{% static 'Air/css/map.css' %}">
 {% endblock %}
 
@@ -51,19 +51,16 @@
 <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
     crossorigin=""></script>
 
-{% load static %}
 <script src="{% static 'Air/js/utils/HttpClient.js' %}"></script>
-{% load static %}
 <script src="{% static 'Air/js/utils/map_utils.js' %}"></script>
-{% load static %}
 <script src="{% static 'Air/js/charts/chart_map.js' %}"></script>
-{% load static %}
+<script src="{% static 'Air/js/utils/chart_utils.js' %}"></script>
 <script src="{% static 'Air/js/charts/charts.js' %}"></script>
 
 <script>
     const button = document.getElementById('send_request_id')
     button.onclick = () => {
-        makeChart("{% url 'GetAreaData' %}")
+        drawChart("{% url 'GetAreaData' %}")
     }
 </script>
 

@@ -1,0 +1,6 @@
+/home/jaro/Desktop/ZPRproject/PairlyDB/CMakeFiles/edit_cache.dir
+/home/jaro/Desktop/ZPRproject/PairlyDB/CMakeFiles/test.dir
+/home/jaro/Desktop/ZPRproject/PairlyDB/CMakeFiles/test_PairlyDB.dir
+/home/jaro/Desktop/ZPRproject/PairlyDB/CMakeFiles/pairly-db.dir
+/home/jaro/Desktop/ZPRproject/PairlyDB/CMakeFiles/rebuild_cache.dir
+/home/jaro/Desktop/ZPRproject/PairlyDB/CMakeFiles/pypairly.dir

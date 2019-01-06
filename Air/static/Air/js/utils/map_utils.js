@@ -55,7 +55,7 @@ function markDevices(map, devices) {
     for (const info of devices) {
         var m = L.marker([info.lat, info.lng])
         m.addTo(map)
-            .bindPopup(`Device with id ${info.id}`)
+            .bindPopup(`Device with name: <a href="/devices/device_info/${info.id}">${info.name}</a>`)
         deviceMarkers.push(m)
     }
 }

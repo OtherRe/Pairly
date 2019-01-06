@@ -11,13 +11,6 @@ import pypairly as db
 # Create your views here.
 
 
-        
-
-@login_required(redirect_field_name='login')
-def users_devices(request):
-    devices = Db.mongo().getDevices(request.user.username)
-    return render(request, 'devices/device_list.html', {'devices': devices})
-
 def get_data_type(data_type):
     if data_type == 'PM2.5':
         return db.DataType.PM2_5
@@ -25,6 +18,13 @@ def get_data_type(data_type):
         return db.DataType.PM10
     elif data_type == 'CO':
         return db.DataType.CO
+        
+
+@login_required(redirect_field_name='login')
+def users_devices(request):
+    devices = Db.mongo().getDevices(request.user.username)
+    return render(request, 'devices/device_list.html', {'devices': devices})
+
 
 @login_required(redirect_field_name='login')
 def new_device(request):
@@ -60,10 +60,11 @@ def new_device(request):
         form = NewDeviceForm(initial=initialCoords)
     return render(request, 'devices/new_device.html', {'form': form})
 
-@login_required(redirect_field_name='login')
-def device_info(request, name):
-  #  public_key = request.GET.get('public_key')
-    if not Device.objects.filter(name=name):
+
+# @login_required(redirect_field_name='login')
+def device_info(request, id):
+    device = Db.mongo().getDevice(id)
+    if device.name == '':
         return HttpResponseNotFound() 
 
-    return render(request, 'devices/device_info.html', {'name':name})       
+    return render(request, 'devices/device_info.html', {'device':device})       

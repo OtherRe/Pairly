@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC  -std=c++17 -Wall -pedantic -Wextra -g  -shared -Wl,-soname,pypairly.so -o pypairly.so CMakeFiles/pypairly.dir/python-lib/pairly-db.cpp.o -Wl,-rpath,/home/jaro/Desktop/ZPRproject/PairlyDB -lboost_unit_test_framework -lboost_system -lboost_python3 libpairly-db.so -lpython3.6m 

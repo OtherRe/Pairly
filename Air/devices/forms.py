@@ -33,7 +33,7 @@ class NewDeviceForm(forms.Form):
     
     def clean_name(self):
         name = self.cleaned_data['name']
-        devices = Db.mongo().getDevices()
+        devices = Db.mongo().getDevices()#!!! users devices
         if list(filter(lambda device: device.name == name, devices)):
             raise ValidationError('You have a device with the same name. Please other name.')
 

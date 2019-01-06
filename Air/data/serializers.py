@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .requests import DataRequest, GetDevicesInfoRequest, OneDeviceDataRequest
+from .requests import MapDataRequest, GetDevicesInfoRequest, OneDeviceDataRequest
 from rest_framework.exceptions import NotFound, AuthenticationFailed, ValidationError
 import secrets
 from time import time
 
-class DataRequestSerializer(serializers.Serializer):
+class MapDataRequestSerializer(serializers.Serializer):
     longitude = serializers.FloatField(min_value = -180, max_value=180)
     latitude = serializers.FloatField(min_value = -90, max_value=90)
     data_type = serializers.ChoiceField(choices=(
@@ -25,10 +25,10 @@ class DataRequestSerializer(serializers.Serializer):
         return data
 
     def create(self):
-        return DataRequest(**self.validated_data)
+        return MapDataRequest(**self.validated_data)
 
 class OneDeviceDataRequestSerializer(serializers.Serializer):
-    device_id = serializers.IntegerField(min_value=0)
+    device_id = serializers.CharField()
     after = serializers.DateField()
     before = serializers.DateField()
 

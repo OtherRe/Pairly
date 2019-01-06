@@ -5,11 +5,13 @@
 </form>
 {% if devices %}
     <h2>This is a list of your devices:</h2>
-    <ul class="devices">
-    {% for device in devices %}
-        <a href="{% url 'device_info' name=device.name %}" style="color:black;" ><li>Device name: {{device.name}}</li></a>
-    {% endfor %}
-    </ul>
+    <div class="list-group">
+        {% for device in devices %}
+            <a href="{% url 'device_info' id=device.id %}" class="list-group-item list-group-item-action">
+               Device name: {{device.name}}
+            </a>
+        {% endfor %}
+    </div>
 {% else %}
     <h2>You have no devices</h2>
 {% endif %}
