@@ -1,1 +1,0 @@
-/usr/bin/c++   -std=c++17 -Wall -pedantic -Wextra -g   -Wl,-rpath -Wl,/usr/local/lib -rdynamic CMakeFiles/test_PairlyDB.dir/tests/test_PairlyDB.cpp.o  -o testBin/test_PairlyDB -Wl,-rpath,/home/jaro/Desktop/ZPRproject/PairlyDB -lboost_unit_test_framework -lboost_system -lboost_python3 libpairly-db.so 

@@ -1,7 +1,7 @@
 from  pypairly import *
 
 
-#PairlyDB.connect("mongodb://127.0.0.1:27017", "pairlyDB")
+PairlyDB.connect("mongodb://127.0.0.1:27017", "pairlyDB")
 pdb = PairlyDB.instance()
 
 id1 = pdb.addDevice(Device("", "user", "key", "devname1", 10, 20, DataType.CO))

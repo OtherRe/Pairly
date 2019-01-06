@@ -18,10 +18,10 @@ This is a device {{device.name}} info
 <canvas id="myChart" width="400" height="200"></canvas>
 
 {% if user.is_authenticated and user.get_username == device.user %}
-<form action="">
-  <button href="" type="button" class="btn btn-danger">
-    Remove device
-  </button>
+<form action="{% url 'RemoveDevice' %}" method="POST" >
+  {% csrf_token %}
+  <input name='id' type="hidden" value="{{device.id}}"></input>
+  <input type="submit" value="Remove device" class="btn btn-danger"></input>
 </form>
 {% endif %}
 

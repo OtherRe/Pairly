@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC  -std=c++17 -Wall -pedantic -Wextra -g  -shared -Wl,-soname,libpairly-db.so -o libpairly-db.so CMakeFiles/pairly-db.dir/src/data-factory-mock.cpp.o CMakeFiles/pairly-db.dir/src/data-factory-mongo.cpp.o CMakeFiles/pairly-db.dir/src/pairly.cpp.o -lmongocxx -lbsoncxx 

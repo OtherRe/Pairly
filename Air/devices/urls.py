@@ -21,4 +21,5 @@ urlpatterns = [
   path('users_devices', views.users_devices, name="users_devices"),
   path('new_device', views.new_device, name="add_new_device"), 
   path('device_info/<id>', views.device_info, name='device_info'), 
+  path('remove_device', views.RemoveDevice, name='RemoveDevice'), 
 ]

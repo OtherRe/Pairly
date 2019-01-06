@@ -3,6 +3,7 @@ from .forms import NewDeviceForm
 from .models import Device
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.exceptions import SuspiciousOperation
 from django.http import HttpResponseNotFound
 from ..Db import Db
 import sys
@@ -68,3 +69,14 @@ def device_info(request, id):
         return HttpResponseNotFound() 
 
     return render(request, 'devices/device_info.html', {'device':device})       
+
+@login_required(redirect_field_name='login')
+def RemoveDevice(request):
+    # print(request.POST.dict())
+    device_id = request.POST.dict().get('id')
+    device = Db.mongo().getDevice(device_id)
+    if device.user != request.user.username:
+        raise SuspiciousOperation()
+    
+    Db.mongo().removeDevice(device_id)
+    return redirect('users_devices')
