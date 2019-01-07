@@ -9,6 +9,7 @@
 
 {% block body %}
 This is a device {{device.name}} info 
+
 <div id="mapid"></div>
 <select name="period_select" id="id_period_select" class="form-control my-3 col-6">
   <option value="86400">Day</option>
@@ -17,13 +18,15 @@ This is a device {{device.name}} info
 </select>
 <canvas id="myChart" width="400" height="200"></canvas>
 
+
 {% if user.is_authenticated and user.get_username == device.user %}
 <form action="{% url 'RemoveDevice' %}" method="POST" >
   {% csrf_token %}
   <input name='id' type="hidden" value="{{device.id}}"></input>
-  <input type="submit" value="Remove device" class="btn btn-danger"></input>
+  <input type="submit" value="Remove device" class="btn btn-danger m-3"></input>
 </form>
 {% endif %}
+
 
 {% endblock %}
 
@@ -31,7 +34,6 @@ This is a device {{device.name}} info
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
     crossorigin=""></script>
-
   <script src={% static 'Air/js/utils/map_utils.js' %}></script>
   <script src={% static 'Air/js/utils/chart_utils.js' %}></script>
   <script src={% static 'Air/js/utils/HttpClient.js' %}></script>
@@ -65,5 +67,4 @@ This is a device {{device.name}} info
     
   </script>
   
-<script> 
 {% endblock script %}

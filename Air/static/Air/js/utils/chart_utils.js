@@ -4,7 +4,7 @@ function makeChart(id){
       type: 'line',
       data: {
           datasets: [{
-              label: 'Time',
+              label: 'Measued Value',
               data:[],
               backgroundColor: [
                   'rgba(255, 99, 132, 0.2)',
@@ -58,16 +58,14 @@ function formatTimeForChart(dates){
 
       let curr = ''
       if(curr_year !== prev_year)
-          curr = curr_year + curr_month + curr_day
-      else if(curr_month !== prev_month)
-          curr = curr_month + curr_day
-      else if(curr_day !== prev_day)
-          curr = curr_day
-      
+          curr = curr_year + '-' + curr_month + '-' + curr_day
+      else if(curr_month !== prev_month || curr_day !== prev_day)
+          curr = curr_month + '-' + curr_day
+
       //removing seconds from time
-      curr += curr_time.split(':')
-                        .slice(0,2)
-                        .join(':')
+      curr += ' ' + curr_time.split(':')
+                             .slice(0,2)
+                             .join(':')
 
       time_axis.push(curr)
   }

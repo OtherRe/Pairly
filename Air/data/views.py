@@ -6,7 +6,6 @@ from .serializers import (MapDataRequestSerializer,
         OneDeviceDataRequestSerializer,
         PostDataSerializer)
 
-from .data_models import DataResponse
 from .throttling import DeviceRateThrottle
 import secrets
 

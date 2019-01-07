@@ -3,3 +3,6 @@
     height: 400px; 
     position: relative;
 }
+button {
+    border-radius:20px;
+}

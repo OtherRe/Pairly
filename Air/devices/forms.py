@@ -1,7 +1,5 @@
 from django import forms
 from django.forms import ModelForm, ValidationError
-from .models import Device, Location
-from .validators import validate_latitude, validate_longitute
 from Crypto.PublicKey import RSA
 from ..Db import Db
 

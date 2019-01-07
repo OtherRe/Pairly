@@ -43,7 +43,9 @@ document.getElementById('id_radius').onchange = () => {
 }
 
 document.getElementById('id_data_type').onchange = () => {
+    console.log("dupa")
     const lng = document.getElementById('id_longitude').value
     const lat = document.getElementById('id_latitude').value
-    putMarkerAndResfreshDevices({lng : lng, lat:lat})
+    showDevices(mymap, '/data/GetDevicesInfo/', lng, lat, (currentMapBounds.getNorth() - currentMapBounds.getSouth()) / 2 * 111)
+
 }

@@ -1,24 +1,13 @@
 from django.shortcuts import render, redirect
 from .forms import NewDeviceForm
-from .models import Device
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpResponseNotFound
 from ..Db import Db
-import sys
-sys.path.append('/home/jaro/Desktop/ZPRproject/PairlyDB/build')
 import pypairly as db
 # Create your views here.
 
-
-def get_data_type(data_type):
-    if data_type == 'PM2.5':
-        return db.DataType.PM2_5
-    elif data_type == 'PM10':
-        return db.DataType.PM10
-    elif data_type == 'CO':
-        return db.DataType.CO
         
 
 @login_required(redirect_field_name='login')
@@ -39,7 +28,7 @@ def new_device(request):
                     form.cleaned_data.get('name'),
                     form.cleaned_data.get('latitude'),
                     form.cleaned_data.get('longitude'),
-                    get_data_type(form.cleaned_data.get('data_type'))
+                    Db.get_data_type(form.cleaned_data.get('data_type'))
             )
 
             Db.mongo().addDevice(device)            

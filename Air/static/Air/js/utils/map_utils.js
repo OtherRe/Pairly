@@ -30,6 +30,17 @@ function mapSetup(defaultLng, defaultLat) {
     return map;
 }
 
+
+/**
+ * 
+ * @param {*} map 
+ * @param {*} url 
+ * @param {*} lng 
+ * @param {*} lat 
+ * @param {*} radius 
+ * Fetches the data from database and puts makers for every
+ * fetched deviece on map
+ */
 function showDevices(map, url, lng, lat, radius) {
     const data_type = document.getElementById('id_data_type').value
 

@@ -7,6 +7,8 @@ function drawChart(dataUrl) {
     const httpClient = new HttpClient()
     const formData = new FormData(form)
     httpClient.getJSONWithArgs(dataUrl, formData.entries(), data => {
+        if (data.time_axis.length === 0)
+            return;
         myChart.data.labels = formatTimeForChart(data.time_axis);
         myChart.data.datasets[0].data = data.value_axis;
         myChart.update();
