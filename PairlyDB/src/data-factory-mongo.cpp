@@ -9,19 +9,15 @@ bool DataFactoryMongo::isConnected()
 void DataFactoryMongo::connect(const std::string &address, const std::string &dbName)
 {
     if (connected)
-        throw DataBaseException("Mongo db already connected");
+        throw DataBaseException("Database already connected already connected");
 
-    // TODO: find out that there is no db
     static mongocxx::instance instance{}; // This should be done only once.
     mongocxx::uri uri(address);
-
-    // TODO: maybe it should be dynamic?
-    // TODO: restrict clients access
-    static mongocxx::client client(uri);
-    db = client[dbName];
-
+    
+    poolPtr = std::make_unique<mongocxx::pool>(uri);
 
     connected = true;
+    this->dbName = dbName;
 }
 
 bsoncxx::oid DataFactoryMongo::stringToOid(const std::string &str)
@@ -72,19 +68,24 @@ std::string DataFactoryMongo::addDevice(const Device &dev)
 
     bsoncxx::document::view view = dev_value.view();
 
+    mongocxx::pool::entry client = poolPtr->acquire();
     bsoncxx::stdx::optional<mongocxx::result::insert_one> result =
-                db["devices"].insert_one(view);
+                (*client)[dbName]["devices"].insert_one(view);
 
-    // TODO check return result
 
-    return result.value().inserted_id().get_oid().value.to_string();
+    if (result)
+        return result.value().inserted_id().get_oid().value.to_string();
+    else
+        throw DataBaseException("Adding device failed");
 }
 
 DeviceVec DataFactoryMongo::getDevices()
 {
     DeviceVec result;
 
-    mongocxx::cursor cursor = db["devices"].find({});
+    mongocxx::pool::entry client = poolPtr->acquire();
+    mongocxx::cursor cursor = (*client)[dbName]["devices"].find({});
+
     for (auto view : cursor) {
         result.push_back(parseDevice(view));
     }
@@ -94,30 +95,37 @@ DeviceVec DataFactoryMongo::getDevices()
 
 void DataFactoryMongo::removeDevice(const std::string &id)
 {
-    db["devices"].delete_one(bsoncxx::builder::stream::document{} << "_id"
+    mongocxx::pool::entry client = poolPtr->acquire();
+
+    (*client)[dbName]["devices"].delete_one(bsoncxx::builder::stream::document{} << "_id"
                             << stringToOid(id) << bsoncxx::builder::stream::finalize);
+
+    (*client)[dbName]["data"].delete_many(bsoncxx::builder::stream::document{} << "device"
+                            << stringToOid(id) << bsoncxx::builder::stream::finalize);
+    
 }
 
 Device DataFactoryMongo::getDeviceById(const std::string &id)
 {
-
+    mongocxx::pool::entry client = poolPtr->acquire();
+    
     bsoncxx::stdx::optional<bsoncxx::document::value> maybe_result =
-    db["devices"].find_one(bsoncxx::builder::stream::document{} << "_id"
+    (*client)[dbName]["devices"].find_one(bsoncxx::builder::stream::document{} << "_id"
                             << stringToOid(id) << bsoncxx::builder::stream::finalize);
 
-    if (maybe_result) {
-        return parseDevice(maybe_result->view());
-    }
+    if (!maybe_result)
+        throw DataBaseException("Device with id: " + id + " does not exist");
 
-    return Device();
+    return parseDevice(maybe_result->view());
 }
 
 DataVec DataFactoryMongo::getDeviceData(const std::string &deviceId,
                                         int timeAfter, int timeBefore)
 {
     DataVec data;
+    mongocxx::pool::entry client = poolPtr->acquire();
 
-    mongocxx::cursor cursor = db["data"].find(
+    mongocxx::cursor cursor = (*client)[dbName]["data"].find(
         bsoncxx::builder::stream::document{}
         << "device" << stringToOid(deviceId) << "time"
         << bsoncxx::builder::stream::open_document
@@ -135,6 +143,7 @@ DataVec DataFactoryMongo::getDeviceData(const std::string &deviceId,
 void DataFactoryMongo::addData(const std::string &deviceId, const Data &data)
 {
     auto builder = bsoncxx::builder::stream::document{};
+    mongocxx::pool::entry client = poolPtr->acquire();
 
     bsoncxx::document::value dev_value = builder
         << "device" << stringToOid(deviceId)
@@ -145,14 +154,15 @@ void DataFactoryMongo::addData(const std::string &deviceId, const Data &data)
     bsoncxx::document::view view = dev_value.view();
 
     bsoncxx::stdx::optional<mongocxx::result::insert_one> result =
-                db["data"].insert_one(view);
+                (*client)[dbName]["data"].insert_one(view);
 }
 
 DeviceVec DataFactoryMongo::getDevices(const std::string &user)
 {
     DeviceVec dv;
+    mongocxx::pool::entry client = poolPtr->acquire();
 
-    mongocxx::cursor cursor = db["devices"].find(
+    mongocxx::cursor cursor = (*client)[dbName]["devices"].find(
         bsoncxx::builder::stream::document{}
         << "user" << user
         << bsoncxx::builder::stream::finalize);
@@ -168,8 +178,9 @@ DeviceVec DataFactoryMongo::getDevices(double latitude, double longitude,
                                        double kilometersRadius, DataType dataType) const
 {
     DeviceVec dv;
+    mongocxx::pool::entry client = poolPtr->acquire();
 
-    mongocxx::cursor cursor = db["devices"].find(
+    mongocxx::cursor cursor = (*client)[dbName]["devices"].find(
         bsoncxx::builder::stream::document{}
         << "dataType" << static_cast<int>(dataType)
         << "location" << bsoncxx::builder::stream::open_document

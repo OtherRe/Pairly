@@ -15,6 +15,7 @@
 
 #include <mongocxx/client.hpp>
 #include <mongocxx/instance.hpp>
+#include <mongocxx/pool.hpp>
 
 class DataFactoryMongo : public DataFactory {
 public:
@@ -37,7 +38,8 @@ private:
     using CollectionPtr = std::unique_ptr<mongocxx::collection>;
 
     bool connected = false;
-    mongocxx::database db;
+    std::unique_ptr<mongocxx::pool> poolPtr;
+    std::string dbName;
 
     static bsoncxx::oid stringToOid(const std::string &str);
     static Device parseDevice(const bsoncxx::document::view &view);
