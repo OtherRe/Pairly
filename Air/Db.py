@@ -24,3 +24,7 @@ class Db:
           return db.DataType.PM10
       elif data_type == 'CO':
           return db.DataType.CO
+
+    @staticmethod
+    def createData(*args):
+        return db.Data(*args)

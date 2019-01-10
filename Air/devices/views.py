@@ -39,8 +39,8 @@ def new_device(request):
         print(devices)
         if devices:
             initialCoords = {
-                'latitude': devices[0].latitude, 
-                'longitude': devices[0].longitude,
+                'latitude': devices[-1].latitude, 
+                'longitude': devices[-1].longitude,
             }
         else:
             initialCoords = {

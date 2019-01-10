@@ -7,7 +7,10 @@ from .serializers import (MapDataRequestSerializer,
         PostDataSerializer)
 
 from .throttling import DeviceRateThrottle
+from django.shortcuts import render
 import secrets
+from django.utils.safestring import mark_safe
+import json
 
 # Create your views here.
 
@@ -66,11 +69,6 @@ class GetDevicesInfo(APIView):
 
         data_response = data_request.create().make_query()
         return Response(data_response)
-        # return Response({'devices': [
-        #         {'lat' : 52.237049, 'lng':21.017532, 'id':1},
-        #         # {'lat' : 52.247049, 'lng':21.017532, 'id':2},
-        #         # {'lat' : 52.227049, 'lng':21.017532, 'id':3},
-        # ]})
 
 class PostData(APIView):
     """
@@ -87,3 +85,5 @@ class PostData(APIView):
         
         return Response({}, status=status.HTTP_201_CREATED)
         
+def index(request):
+        return render(request, 'data/test.html')

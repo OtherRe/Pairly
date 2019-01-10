@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Test</title>
+</head>
+<body>
+  <button id="test">
+  Click me
+  </button>
+</body>
+
+<script>
+
+  var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/data/postData/23122');
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        console.log(message)
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#test').onclick = function(e) {
+        var message = "dupa";
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+    };
+</script>
+
+</html>
