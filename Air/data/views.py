@@ -7,10 +7,10 @@ from .serializers import (MapDataRequestSerializer,
         PostDataSerializer)
 
 from .throttling import DeviceRateThrottle
+from ..Db import Db
 from django.shortcuts import render
-import secrets
-from django.utils.safestring import mark_safe
-import json
+import time
+
 
 # Create your views here.
 
@@ -31,11 +31,10 @@ class GetAreaData(APIView):
         """
         data_request  = MapDataRequestSerializer(data=request.GET.dict())
         if not data_request.is_valid():
-                error = {"message": "Query for area data was incorrect"}
-                return Response(error, status=status.HTTP_400_BAD_REQUEST)
+                return Response(data_request.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data_response = data_request.create().make_query()
-        return Response(data_response) 
+        return Response(data_response, status=status.HTTP_200_OK) 
 
 class GetDeviceData(APIView):
     """
@@ -47,11 +46,10 @@ class GetDeviceData(APIView):
         """
         data_request  = OneDeviceDataRequestSerializer(data=request.GET.dict())
         if not data_request.is_valid():
-                error = {"message": "Query for device data was incorrect"}
-                return Response(error, status=status.HTTP_400_BAD_REQUEST)
+                return Response(data_request.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data_response = data_request.create().make_query()
-        return Response(data_response)
+        return Response(data_response, status=status.HTTP_200_OK)
 
 class GetDevicesInfo(APIView):
     """
@@ -64,11 +62,10 @@ class GetDevicesInfo(APIView):
         """
         data_request = GetDevicesInfoRequestSerializer(data=request.GET.dict())
         if not data_request.is_valid():
-                error = {"message": "Query for device data was incorrect"}
-                return Response(error, status=status.HTTP_400_BAD_REQUEST)
+                return Response(data_request.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data_response = data_request.create().make_query()
-        return Response(data_response)
+        return Response(data_response, status=status.HTTP_200_OK)
 
 class PostData(APIView):
     """
@@ -77,13 +74,11 @@ class PostData(APIView):
     # throttle_classes = (DeviceRateThrottle,)
 
     def post(self, request):
-        data = PostDataSerializer(data=request.POST.dict())
-        data.is_valid()
-        data = data.validated_data
+        data_request = PostDataSerializer(data=request.POST.dict())
+        if not data_request.is_valid():
+                return Response(data_request.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # db.addData(data['id'].id, (data['time'], data['value']))
+        data = data_request.validated_data
+        # Db.mongo().addData(data['id'], (data['value'], int(time.time())))
         
-        return Response({}, status=status.HTTP_201_CREATED)
-        
-def index(request):
-        return render(request, 'data/test.html')
+        return Response({'message': "Nice job", 'id': data['device_id']}, status=status.HTTP_201_CREATED)

@@ -21,5 +21,5 @@ urlpatterns = [
     path('GetAreaData/', views.GetAreaData.as_view(), name="GetAreaData"), 
     path('GetDeviceData/', views.GetDeviceData.as_view(), name="GetDeviceData"), 
     path('GetDevicesInfo/', views.GetDevicesInfo.as_view(), name="GetDevicesInfo"), 
-    path('test/', views.index, name="data_index"), 
+    path('PostData/', views.PostData.as_view(), name="PostData"), 
 ]

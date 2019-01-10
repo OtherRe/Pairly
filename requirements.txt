@@ -3,3 +3,6 @@ djongo>=1.2.30
 pycrypto>=2.6
 djangorestframework
 channels
+asymmetric_jwt_auth
+setuptools>=40.6.3
+

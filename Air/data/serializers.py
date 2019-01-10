@@ -3,6 +3,8 @@ from .requests import MapDataRequest, GetDevicesInfoRequest, OneDeviceDataReques
 from rest_framework.exceptions import NotFound, AuthenticationFailed, ValidationError
 import secrets
 from time import time
+from ..Db import Db
+import asymmetric_jwt_auth as jwt
 
 class MapDataRequestSerializer(serializers.Serializer):
     longitude = serializers.FloatField(min_value = -180, max_value=180)
@@ -57,34 +59,26 @@ class GetDevicesInfoRequestSerializer(serializers.Serializer):
         return GetDevicesInfoRequest(**self.validated_data)
 
 class PostDataSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    auth_token = serializers.CharField()
-    public_key = serializers.CharField()
-    value = serializers.FloatField(min_value=0)
-    time = serializers.IntegerField()
+    authorization = serializers.CharField()
+    device_id = serializers.CharField()
+    value = serializers.FloatField(min_value = 0)
 
-    def validate_id(self, value):
-        device = Device.objects.get(id=value)
-        if not device:
-            raise NotFound("Device with this id was not found")
-        
-        # return value
-        return device
-
-    def validate_time(self, value):
-        current_time = time()
-        if current_time < value or current_time > value + 3600:
-            raise ValidationError("Date was to fat in the future of in the past")
-
-        return value
-    
     def validate(self, data):
-        # device = Device.objects.get(id=data['id'])
-        device = data['id']
-        if not secrets.compare_digest(data['auth_token'], device.auth_token):
-            raise AuthenticationFailed("Authentication via authentication token failed")
+        try:
+            device_id = jwt.token.get_claimed_username(data['authorization'])
+        except:
+            raise serializers.ValidationError('The token needs to be signed before sending')
 
-        if not secrets.compare_digest(data['public_key'], device.public_key):
-            raise AuthenticationFailed("Public keys didn't match")
+        device = Db.mongo().getDevice(device_id)
+        if device.name == '' or device_id != data['device_id']:
+           raise serializers.ValidationError('Invalid device id') 
+
+        try:
+            validated = jwt.token.verify(data['authorization'], device.pubKey)
+        except:
+            raise serializers.ValidationError('Verification failed. There might be incorrect public key in database')
+            
+        if not validated:
+            raise serializers.ValidationError('Public and private key didn\'t match')
 
         return data
