@@ -2,6 +2,7 @@ from channels.generic.websocket import WebsocketConsumer
 from ..Db import Db
 import json
 import random
+from . import cryptocore
 
 class PostDataConsumer(WebsocketConsumer):
     def connect(self):
