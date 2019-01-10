@@ -79,6 +79,6 @@ class PostData(APIView):
                 return Response(data_request.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = data_request.validated_data
-        # Db.mongo().addData(data['id'], (data['value'], int(time.time())))
+        Db.mongo().addData(data['device_id'], Db.createData(data['value'], int(time.time())))
         
-        return Response({'message': "Nice job", 'id': data['device_id']}, status=status.HTTP_201_CREATED)
+        return Response({}, status=status.HTTP_201_CREATED)

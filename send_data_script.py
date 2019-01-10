@@ -19,4 +19,4 @@ if __name__ == '__main__':
       'value': sys.argv[1],
       'device_id': device_id,
   })
-  print(r.text)
+  print(r.status_code)
