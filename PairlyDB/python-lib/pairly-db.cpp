@@ -2,6 +2,8 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include "pairly.h"
 #include "data-factory-mongo.h"
+#include "pairly-exceptions.h"
+#include <mongocxx/exception/exception.hpp>
 
 
 using namespace boost::python;
@@ -25,8 +27,23 @@ GetDeviceNone getDevNone = &PairlyDB::getDevices;
 typedef DeviceVec (PairlyDB::*GetDeviceGeo)(double, double, double, DataType) const;
 GetDeviceGeo getDevGeo = &PairlyDB::getDevices;
 
+void translatorPL(const PairlyLibException& e) {
+    std::string msg = "PairlyLibException" + std::string(e.what());
 
+    PyErr_SetString(PyExc_UserWarning, msg.c_str());
+}
 
+void translatorDB(const DataBaseException& e) {
+    std::string msg = "DataBaseException" + std::string(e.what());
+
+    PyErr_SetString(PyExc_UserWarning, msg.c_str());
+}
+
+void translatorMG(const mongocxx::exception& e) {
+    std::string msg = "mongocxx::exception" + std::string(e.what());
+
+    PyErr_SetString(PyExc_UserWarning, msg.c_str());
+}
 
 BOOST_PYTHON_MODULE(pypairly)
 {
@@ -74,4 +91,8 @@ BOOST_PYTHON_MODULE(pypairly)
         .def("getDeviceData", &PairlyDB::getDeviceData2)
         .def("getDeviceData", &PairlyDB::getDeviceData3)
         .def("getDeviceData", &PairlyDB::getDeviceData4);
+
+    register_exception_translator<PairlyLibException>(translatorPL);
+    register_exception_translator<DataBaseException>(translatorDB);
+    register_exception_translator<mongocxx::exception>(translatorMG);
 }

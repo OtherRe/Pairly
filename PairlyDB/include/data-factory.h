@@ -101,6 +101,13 @@ public:
      */
     virtual void addData(const std::string &deviceId, const Data &data) = 0;
 
+    /**
+     *  @brief Get devices connected with a user
+     * 
+     *  @param user Username whose devices we'd like to obtain
+     * 
+     *  @return A vector of user's devices
+     */
     virtual DeviceVec getDevices(const std::string &user) = 0;
 };
 
