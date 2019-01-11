@@ -8,7 +8,8 @@
 {% endblock links %}
 
 {% block body %}
-This is a device {{device.name}} info 
+This is a device {{device.name}} info <br>
+This is a device id: {{device.id}} <br>
 
 <div id="mapid"></div>
 <select name="period_select" id="id_period_select" class="form-control my-3 col-6">
@@ -20,7 +21,7 @@ This is a device {{device.name}} info
 
 
 {% if user.is_authenticated and user.get_username == device.user %}
-<form action="{% url 'RemoveDevice' %}" method="POST" >
+<form action="{% url 'remove_device' %}" method="POST" >
   {% csrf_token %}
   <input name='id' type="hidden" value="{{device.id}}"></input>
   <input type="submit" value="Remove device" class="btn btn-danger m-3"></input>
@@ -42,13 +43,10 @@ This is a device {{device.name}} info
     function drawChart(){
       let period = parseInt(document.getElementById('id_period_select').value)
       let begin     = new Date(Date.now() - period*1000).toJSON().substring(0,10);
-      let today     = new Date().toJSON().substring(0,10);
-      console.log(period)
       const httpClient = new HttpClient()
       httpClient.getJSONWithArgs("{% url 'GetDeviceData' %}", [
         ['device_id', "{{device.id}}"],
         ['after',  begin ],
-        ['before', today ],
       
       ], data => {
           if(data.time_axis.length == 0)

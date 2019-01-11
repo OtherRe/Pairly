@@ -30,7 +30,7 @@ function putMarkerAndResfreshDevices(e) {
 
     if (!currentMapBounds || !currentMapBounds.contains(e.latlng)) {
         currentMapBounds = mymap.getBounds()
-        showDevices(mymap, '/data/GetDevicesInfo/', lng, lat, (currentMapBounds.getNorth() - currentMapBounds.getSouth()) / 2 * 111)
+        showDevices(mymap, '/data/GetDevicesInfo/', lng, lat, (currentMapBounds.getNorth() - currentMapBounds.getSouth()) / 2 * 1111)
     }
 }
 

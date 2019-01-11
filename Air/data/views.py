@@ -6,7 +6,6 @@ from .serializers import (MapDataRequestSerializer,
         OneDeviceDataRequestSerializer,
         PostDataSerializer)
 
-from .throttling import DeviceRateThrottle
 from ..Db import Db
 from django.shortcuts import render
 import time
@@ -16,18 +15,19 @@ import time
 
 class GetAreaData(APIView):
     """
-    View to get a devices data to display a graph
+    View to get a devices data to display a graph. Given parameters listed
+    below returns two lists value_axis and time_axis with calculated mean
+    data from devices
     """
     def get(self, request, format=None):
         """
         Return formatted data as json
-        Params:
-        longitude - number representing lng of starting point of a search
-        latitude  - number representing lat of starting point of a search
-        data_type - 'CO', 'PM2.5' or 'PM10' as a data type of a seach
-        radius - radius of a search
-        after  - DateTime representing starting date of search
-        before = DateTime representing ending   date of seach
+        :param longitude: number representing lng of starting point of a search
+        :param latitude: number representing lat of starting point of a search
+        :param data_type: 'CO', 'PM2.5' or 'PM10' as a data type of a seach
+        :param radius: radius of a search
+        :param after: DateTime representing starting date of search
+        :param before: DateTime representing ending   date of seach
         """
         data_request  = MapDataRequestSerializer(data=request.GET.dict())
         if not data_request.is_valid():
@@ -38,11 +38,17 @@ class GetAreaData(APIView):
 
 class GetDeviceData(APIView):
     """
-    View to get a device info(id and location) about particular device
+    View to get a device info(id and location) about particular device.
+    Given parameters listed
+    below returns two lists value_axis and time_axis with calculated mean
+    data from device
     """
     def get(self, request, format=None):
         """
-        Return formatted data as json
+        Return formatted data as json, as two lists with value_axis and time_axis
+        :param device_id: id string of a device
+        :param after: DateTime representing starting date of search
+        :param before: DateTime representing ending   date of seach
         """
         data_request  = OneDeviceDataRequestSerializer(data=request.GET.dict())
         if not data_request.is_valid():
@@ -54,11 +60,15 @@ class GetDeviceData(APIView):
 class GetDevicesInfo(APIView):
     """
     View to get info(id and location) about devices
-    on the map
+    on the map.
     """
     def get(self, request, format=None):
         """
-        Return formatted data as json
+        Return formatted data as json, as two list with objects containing name location
+        and id of a device
+        :param device_id: id string of a device
+        :param after: DateTime representing starting date of search
+        :param before: DateTime representing ending   date of seach
         """
         data_request = GetDevicesInfoRequestSerializer(data=request.GET.dict())
         if not data_request.is_valid():
@@ -70,8 +80,8 @@ class GetDevicesInfo(APIView):
 class PostData(APIView):
     """
     View to manage posting data by devices with authentication
+    In order to post data use our script called send_data_script.py
     """
-    # throttle_classes = (DeviceRateThrottle,)
 
     def post(self, request):
         data_request = PostDataSerializer(data=request.POST.dict())

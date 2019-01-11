@@ -3,6 +3,7 @@ from .requests import MapDataRequest, GetDevicesInfoRequest, OneDeviceDataReques
 from rest_framework.exceptions import NotFound, AuthenticationFailed, ValidationError
 import secrets
 from time import time
+import datetime
 from ..Db import Db
 import asymmetric_jwt_auth as jwt
 
@@ -32,14 +33,12 @@ class MapDataRequestSerializer(serializers.Serializer):
 class OneDeviceDataRequestSerializer(serializers.Serializer):
     device_id = serializers.CharField()
     after = serializers.DateField()
-    before = serializers.DateField()
 
     def validate(self, data):
         """
         Make sure that after is before before
         """
-
-        if data['after'] > data['before']:
+        if data['after'] >= datetime.date.today(): 
             raise serializers.ValidationError("Begin date must be before end date")
 
         return data
@@ -69,7 +68,11 @@ class PostDataSerializer(serializers.Serializer):
         except:
             raise serializers.ValidationError('The token needs to be signed before sending')
 
-        device = Db.mongo().getDevice(device_id)
+        try:
+            device = Db.mongo().getDevice(device_id)
+        except:
+           raise serializers.ValidationError('Invalid device id') 
+        print(device)
         if device.name == '' or device_id != data['device_id']:
            raise serializers.ValidationError('Invalid device id') 
 

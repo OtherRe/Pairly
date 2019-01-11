@@ -23,6 +23,6 @@ if __name__ == '__main__':
 
   devices = Db.mongo().getDevices()
   for device in devices:
-    for i in range(100):
+    for i in reversed(range(100)):
       data = db.Data(random.uniform(6,66), int(time.time()) - i * 3600)
       Db.mongo().addData(device.id, data)

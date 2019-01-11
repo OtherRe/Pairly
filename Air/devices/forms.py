@@ -4,12 +4,11 @@ from Crypto.PublicKey import RSA
 from ..Db import Db
 
 class NewDeviceForm(forms.Form):
-    # name = forms.CharField(max_length=25, attrs=form_attr)
     name = forms.CharField(max_length=20)
     data_type = forms.ChoiceField(choices=(
         ('CO', 'CO'), ('PM2.5', 'PM2.5'),('PM10', 'PM10'))) #what kind of air particles it measures
 
-    public_key = forms.CharField(max_length=100, widget=forms.Textarea)
+    public_key = forms.CharField(widget=forms.Textarea)
     latitude = forms.FloatField(min_value=-180, max_value=180, widget=forms.HiddenInput(), required=True, label='')
     longitude = forms.FloatField(min_value=-90, max_value=90, widget=forms.HiddenInput(), required=True, label='')
 
@@ -17,7 +16,7 @@ class NewDeviceForm(forms.Form):
         public_key = self.cleaned_data['public_key']
         
         try:
-            #RSA.importKey(data)
+            RSA.importKey(public_key)
             pass
         except:
             raise ValidationError("Wrong public key")

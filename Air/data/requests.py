@@ -1,6 +1,7 @@
 import time
 from ..Db import Db
 from datetime import datetime
+import time
 from itertools import tee
 
 
@@ -37,14 +38,12 @@ class OneDeviceDataRequest():
     This one fetches collected data from a single device
     """
 
-    def __init__(self, device_id, after, before):
+    def __init__(self, device_id, after):
         self.device_id = device_id
         self.after = int(time.mktime(after.timetuple()))
-        self.before = int(time.mktime(before.timetuple()))
 
     def to_list(self):
-        return [self.device_id, (self.before - self.after)//10 // 3600, self.after,
-                self.before]
+        return [self.device_id, 0,  self.after]
 
     def make_query(self):
         value_time_pair_data = Db.mongo().getDeviceData(*self.to_list())

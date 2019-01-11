@@ -9,8 +9,8 @@ if __name__ == '__main__':
     print('Wrong number of arguments')
     sys.exit(1)
 
-  device_id = '5c37b29fb5862265a268aad2'                          #paste id of your device here
-  private_key = jwt.load_private_key(key_file='test-private.pem') #paste a path to private key of your device
+  device_id = '5c3889feb586222ada04a412'                          #paste id of your device here
+  private_key = jwt.load_private_key(key_file='other-private.pem') #paste a path to private key of your device
   
   auth = jwt.token.sign(username=device_id, private_key=private_key).decode('utf-8')
 
@@ -19,4 +19,5 @@ if __name__ == '__main__':
       'value': sys.argv[1],
       'device_id': device_id,
   })
+  print(r.text)
   print(r.status_code)
