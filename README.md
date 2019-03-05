@@ -1,6 +1,5 @@
 # Pairly
 
-One Paragraph of project description goes here
 Pairly is simple platform for users with small devices(like raspberry pi), that are capable of measuring air quality. Platform allows users to send data from their devices to Pairly server and then see the data in the form of charts. Pairly also allows to see average data for many devices too.
 
 # Example run
